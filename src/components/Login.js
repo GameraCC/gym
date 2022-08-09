@@ -6,8 +6,9 @@ import {
     TextInput,
     Pressable
 } from 'react-native'
-import {useEffect, useState} from 'react'
-import axios from 'axios'
+import {useEffect, useReducer, useState} from 'react'
+import {useSelector, useDispatch} from 'react-redux'
+import {login} from '../actions/session'
 
 const Login = () => {
     const [isSignup, setIsSignup] = useState(true)
@@ -15,7 +16,17 @@ const Login = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
-    useEffect(() => {}, [])
+    const error = useSelector(state => state.session.error)
+    const session = useSelector(state => state.session.token)
+    const dispatch = useDispatch()
+
+    const handleAuth = () => {
+        if (isSignup) false
+        else dispatch(login(username, password))
+    }
+
+    console.log('session:', session)
+    console.log('err:', error)
 
     return (
         <View style={styles.login}>
@@ -25,20 +36,20 @@ const Login = () => {
             {isSignup && (
                 <TextInput
                     styles={styles.input}
-                    autoComplete="username"
-                    keyboardType="default"
-                    placeholder="Username"
-                    onChangeText={setUsername}
-                    value={username}
+                    autoComplete="email"
+                    keyboardType="email-address"
+                    placeholder="Email Address"
+                    onChangeText={setEmail}
+                    value={email}
                 ></TextInput>
             )}
             <TextInput
                 styles={styles.input}
-                autoComplete="email"
-                keyboardType="email-address"
-                placeholder="Email Address"
-                onChangeText={setEmail}
-                value={email}
+                autoComplete="username"
+                keyboardType="default"
+                placeholder="Username"
+                onChangeText={setUsername}
+                value={username}
             ></TextInput>
             <TextInput
                 styles={styles.input}
@@ -51,7 +62,7 @@ const Login = () => {
             <Pressable
                 styles={styles.button}
                 android_disableSound={true}
-                onPress={() => handleAuth(isSignup)}
+                onPress={() => handleAuth()}
             >
                 <Text>{isSignup ? 'Sign up' : 'Login'}</Text>
             </Pressable>
@@ -68,6 +79,7 @@ const Login = () => {
             >
                 <Text>{!isSignup ? 'Sign up' : 'Login'}</Text>
             </Pressable>
+            <Text>{error}</Text>
         </View>
     )
 }

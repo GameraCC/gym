@@ -1,7 +1,16 @@
-const user = (state = 0, type) => {
+/**
+ * Contains all reducers to modify user data related state
+ */
+
+const initialState = {
+    username: '',
+    email: '',
+    isLoading: '',
+    error: ''
+}
+
+const user = (state = initialState, type) => {
     switch (type) {
-        default:
-            break
     }
 
     return state

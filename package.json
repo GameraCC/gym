@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "main": "./src/App.js",
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
-    "eject": "expo eject"
+    "start": "STAGING=true expo start",
+    "android": "STAGING=true expo start --android",
+    "ios": "STAGING=true expo start --ios",
+    "web": "STAGING=true expo start --web",
+    "eject": "STAGING=true expo eject"
   },
   "dependencies": {
     "axios": "^0.27.2",
@@ -18,10 +18,13 @@
     "react-native": "0.68.2",
     "react-native-web": "0.17.7",
     "react-redux": "^8.0.2",
-    "redux": "^4.2.0"
+    "redux": "^4.2.0",
+    "redux-thunk": "^2.4.1",
+    "expo-constants": "~13.1.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.9"
+    "@babel/core": "^7.12.9",
+    "babel-plugin-transform-inline-environment-variables": "^0.4.4"
   },
   "private": true,
   "prettier": {
@@ -31,6 +34,7 @@
     "singleQuote": true,
     "quoteProps": "preserve",
     "bracketSpacing": false,
-    "trailingComma": "none"
+    "trailingComma": "none",
+    "arrowParens": "avoid"
   }
 }

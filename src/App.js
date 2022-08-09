@@ -1,11 +1,12 @@
 import {registerRootComponent} from 'expo'
 import {StyleSheet, View, SafeAreaView} from 'react-native'
-import {createStore} from 'redux'
+import {createStore, applyMiddleware} from 'redux'
 import {Provider} from 'react-redux'
 import rootReducer from './reducers'
 import Login from './components/Login'
+import thunk from 'redux-thunk'
 
-const store = createStore(rootReducer)
+const store = createStore(rootReducer, applyMiddleware(thunk))
 
 const App = () => {
     return (
