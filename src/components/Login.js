@@ -6,8 +6,8 @@ import {
     TextInput,
     Pressable
 } from 'react-native'
-import {useEffect, useReducer, useState} from 'react'
-import {useSelector, useDispatch} from 'react-redux'
+import {useState} from 'react'
+import {useSelector, useDispatch, shallowEqual} from 'react-redux'
 import {login} from '../actions/session'
 
 const Login = () => {

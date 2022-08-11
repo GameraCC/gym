@@ -1,5 +1,5 @@
 import {
-    CHANGE_SESSION_LOADING,
+    SET_SESSION_LOADING,
     SET_SESSION_TOKEN,
     SET_SESSION_ERROR
 } from '../actions/types'
@@ -17,20 +17,34 @@ const initialState = {
 
 const session = (state = initialState, action) => {
     switch (action.type) {
-        case CHANGE_SESSION_LOADING:
-            state.isLoading = !state.isLoading
+        case SET_SESSION_LOADING:
+            state = {
+                ...state,
+                isLoading: action.loading
+            }
+            break
         case SET_SESSION_TOKEN:
-            state.valid = true
-            state.token = action.session
-            state.isLoading = false
+            state = {
+                ...state,
+                isLoading: false,
+                error: '',
+                token: action.session,
+                valid: true
+            }
+            break
         case SET_SESSION_ERROR:
-            state.valid = false
-            state.error = action.error
+            state = {
+                ...state,
+                isLoading: false,
+                error: action.error,
+                valid: false
+            }
+            break
         default:
             break
     }
 
-    return state
+    return {...state}
 }
 
 export default session

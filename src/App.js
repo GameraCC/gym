@@ -5,15 +5,18 @@ import {Provider} from 'react-redux'
 import rootReducer from './reducers'
 import Login from './components/Login'
 import thunk from 'redux-thunk'
+import {NavigationContainer} from '@react-navigation/native'
 
 const store = createStore(rootReducer, applyMiddleware(thunk))
 
 const App = () => {
     return (
         <Provider store={store}>
-            <View styles={styles.container}>
-                <Login />
-            </View>
+            <NavigationContainer>
+                <View styles={styles.container}>
+                    <Login />
+                </View>
+            </NavigationContainer>
         </Provider>
     )
 }

@@ -1,5 +1,5 @@
 import {
-    CHANGE_SESSION_LOADING,
+    SET_SESSION_LOADING,
     SET_SESSION_ERROR,
     SET_SESSION_TOKEN
 } from './types'
@@ -8,8 +8,9 @@ import Constants from 'expo-constants'
 
 const {HOST} = Constants.manifest.extra
 
-const changeSessionLoading = () => ({
-    type: CHANGE_SESSION_LOADING
+const setSessionLoading = loading => ({
+    type: SET_SESSION_LOADING,
+    loading
 })
 
 const setSessionToken = session => ({
@@ -25,14 +26,12 @@ const setSessionError = error => ({
 const login = (username, password) => async dispatch => {
     try {
         // Change loading status
-        dispatch(changeSessionLoading())
+        dispatch(setSessionLoading(false))
 
         const data = JSON.stringify({
             username,
             password
         })
-
-        console.log(data)
 
         axios({
             method: 'POST',
@@ -52,7 +51,6 @@ const login = (username, password) => async dispatch => {
             })
             .catch(err => {
                 // Handle various errors for non 2xx status codes
-                if (err.request) dispatch(setSessionError('Fatal server error'))
                 if (err.response) {
                     const data = err.response?.data || null
 
