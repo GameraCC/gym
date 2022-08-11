@@ -10,7 +10,7 @@ const config = {
         splash: {
             image: './src/assets/splash.png',
             resizeMode: 'contain',
-            backgroundColor: '#ffffff'
+            backgroundColor: '#1a1a1a'
         },
         updates: {
             fallbackToCacheTimeout: 0
@@ -21,8 +21,8 @@ const config = {
         },
         android: {
             adaptiveIcon: {
-                foregroundImage: './src/assets/adaptive-icon.png',
-                backgroundColor: '#FFFFFF'
+                foregroundImage: './src/assets/icon.png',
+                backgroundColor: '#1a1a1a'
             }
         },
         web: {
