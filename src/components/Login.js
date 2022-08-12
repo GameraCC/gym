@@ -1,48 +1,26 @@
-import {
-    StyleSheet,
-    View,
-    Button,
-    Text,
-    TextInput,
-    Pressable
-} from 'react-native'
+import {StyleSheet, View, Text, TextInput, Pressable} from 'react-native'
 import {useState} from 'react'
-import {useSelector, useDispatch, shallowEqual} from 'react-redux'
-import {login} from '../actions/session'
+import {useSelector, useDispatch} from 'react-redux'
+import {login, setSessionError} from '../actions/session'
 
-const Login = () => {
-    const [isSignup, setIsSignup] = useState(true)
+const Login = ({navigation}) => {
     const [username, setUsername] = useState('')
-    const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
     const error = useSelector(state => state.session.error)
-    const session = useSelector(state => state.session.token)
     const dispatch = useDispatch()
 
     const handleAuth = () => {
-        if (isSignup) false
-        else dispatch(login(username, password))
+        dispatch(login(username, password))
     }
 
-    console.log('session:', session)
-    console.log('err:', error)
+    const resetError = () => dispatch(setSessionError(''))
 
     return (
         <View style={styles.login}>
             <View style={styles.title}>
                 <Text>Gym</Text>
             </View>
-            {isSignup && (
-                <TextInput
-                    styles={styles.input}
-                    autoComplete="email"
-                    keyboardType="email-address"
-                    placeholder="Email Address"
-                    onChangeText={setEmail}
-                    value={email}
-                ></TextInput>
-            )}
             <TextInput
                 styles={styles.input}
                 autoComplete="username"
@@ -53,7 +31,7 @@ const Login = () => {
             ></TextInput>
             <TextInput
                 styles={styles.input}
-                autoComplete={isSignup ? 'password-new' : 'password'}
+                autoComplete="password"
                 keyboardType="default"
                 placeholder="Password"
                 onChangeText={setPassword}
@@ -64,7 +42,7 @@ const Login = () => {
                 android_disableSound={true}
                 onPress={() => handleAuth()}
             >
-                <Text>{isSignup ? 'Sign up' : 'Login'}</Text>
+                <Text>Login</Text>
             </Pressable>
             <Text>OR</Text>
             <Pressable
@@ -72,12 +50,15 @@ const Login = () => {
                 android_disableSound={true}
                 onPress={() => {
                     setUsername('')
-                    setEmail('')
                     setPassword('')
-                    setIsSignup(!isSignup)
+                    resetError()
+                    navigation.reset({
+                        index: 0,
+                        routes: [{name: 'signup-metadata'}]
+                    })
                 }}
             >
-                <Text>{!isSignup ? 'Sign up' : 'Login'}</Text>
+                <Text>Signup</Text>
             </Pressable>
             <Text>{error}</Text>
         </View>

@@ -1,7 +1,8 @@
 import {
     SET_SESSION_LOADING,
     SET_SESSION_TOKEN,
-    SET_SESSION_ERROR
+    SET_SESSION_ERROR,
+    SET_SIGNING_UP
 } from '../actions/types'
 
 /**
