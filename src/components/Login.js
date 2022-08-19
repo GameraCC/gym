@@ -22,7 +22,7 @@ const Login = ({navigation}) => {
                 <Text>Gym</Text>
             </View>
             <TextInput
-                styles={styles.input}
+                style={styles.input}
                 autoComplete="username"
                 keyboardType="default"
                 placeholder="Username"
@@ -30,7 +30,7 @@ const Login = ({navigation}) => {
                 value={username}
             ></TextInput>
             <TextInput
-                styles={styles.input}
+                style={styles.input}
                 autoComplete="password"
                 keyboardType="default"
                 placeholder="Password"
@@ -38,7 +38,7 @@ const Login = ({navigation}) => {
                 value={password}
             ></TextInput>
             <Pressable
-                styles={styles.button}
+                style={styles.button}
                 android_disableSound={true}
                 onPress={() => handleAuth()}
             >
@@ -46,7 +46,7 @@ const Login = ({navigation}) => {
             </Pressable>
             <Text>OR</Text>
             <Pressable
-                styles={styles.button}
+                style={styles.button}
                 android_disableSound={true}
                 onPress={() => {
                     setUsername('')

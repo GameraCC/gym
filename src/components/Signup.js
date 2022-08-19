@@ -23,18 +23,20 @@ const SignupLocation = () => {
         {name: 'Ukraine'}
     ]
 
-    const onSelect = data => {
+    const onCountrySelect = data => {
         console.log('selected data:', data)
     }
 
     return (
         <View style={styles.signup}>
-            <SearchableInputDropdown
-                editable={false}
-                data={data}
-                onSelect={onSelect}
-                placeholder="Country"
-            />
+            <View style={{width: '50%', height: '5%', top: -200}}>
+                <SearchableInputDropdown
+                    editable={true}
+                    data={data}
+                    onSelect={onCountrySelect}
+                    placeholder="Country"
+                />
+            </View>
         </View>
     )
 }
@@ -54,7 +56,7 @@ const SignupNames = ({navigation}) => {
                 style={styles.input}
                 autocomplete="name-given"
                 keyboardType="default"
-                placeHolder="First Name"
+                placeholder="First Name"
                 onChangeText={setFirstName}
                 value={firstName}
             ></TextInput>
@@ -62,7 +64,7 @@ const SignupNames = ({navigation}) => {
                 style={styles.input}
                 autocomplete="name-family"
                 keyboardType="default"
-                placeHolder="Last Name"
+                placeholder="Last Name"
                 onChangeText={setLastName}
                 value={lastName}
             ></TextInput>
@@ -95,7 +97,7 @@ const SignupMetadata = ({navigation}) => {
                 <Text>Gym</Text>
             </View>
             <TextInput
-                styles={styles.input}
+                style={styles.input}
                 autoComplete="email"
                 keyboardType="email-address"
                 placeholder="Email Address"
@@ -103,7 +105,7 @@ const SignupMetadata = ({navigation}) => {
                 value={email}
             ></TextInput>
             <TextInput
-                styles={styles.input}
+                style={styles.input}
                 autoComplete="username"
                 keyboardType="default"
                 placeholder="Username"
@@ -111,7 +113,7 @@ const SignupMetadata = ({navigation}) => {
                 value={username}
             ></TextInput>
             <TextInput
-                styles={styles.input}
+                style={styles.input}
                 autoComplete="password-new"
                 keyboardType="default"
                 placeholder="Password"
@@ -119,7 +121,7 @@ const SignupMetadata = ({navigation}) => {
                 value={password}
             ></TextInput>
             <Pressable
-                styles={styles.button}
+                style={styles.button}
                 android_disableSound={true}
                 onPress={() => handleContinue()}
             >
@@ -127,7 +129,7 @@ const SignupMetadata = ({navigation}) => {
             </Pressable>
             <Text>OR</Text>
             <Pressable
-                styles={styles.button}
+                style={styles.button}
                 android_disableSound={true}
                 onPress={() => {
                     setUsername('')
