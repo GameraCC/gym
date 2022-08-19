@@ -1,8 +1,7 @@
-import {useState, useEffect} from 'react'
+import {useState, useEffect, useRef} from 'react'
 import {
     StyleSheet,
     View,
-    ScrollView,
     TextInput,
     VirtualizedList,
     Pressable,
@@ -20,43 +19,52 @@ import {
  * @param {Object}
  */
 const Item = props => {
-    const {name, isFirstAndHighlighted, setFirstHighlighted, onSelect} = props
+    const {name, isFirst, isFirstHighlighted, setFirstHighlighted, onSelect} =
+        props
 
-    let [isHighlighted, setHighlighted] = useState(false)
-
-    // Use stateful isFirstHighlighted if this is the first item. If first is not highlighted
-    // this defaults to using the child items stateful isHighlighted because isFirstAndHighlighted
-    // will be false. This convention is fine because it reverts back to using isFirstAndHighlighted
-    // state upon being highlighted
-    if (isFirstAndHighlighted) {
-        isHighlighted = isFirstAndHighlighted
-        setHighlighted = setFirstHighlighted
-    }
+    let [isHighlighted, setHighlighted] = useState(isFirst)
 
     const onPressInHandler = e => {
+        console.log('press in')
         e.preventDefault()
-        // Make this item highlighted
-        setHighlighted(true)
-        // Make default first item unhighlighted
-        setFirstHighlighted(false)
+        if (!isFirst) {
+            // Make this item highlighted
+            setHighlighted(true)
+            // Make default first item unhighlighted
+            setFirstHighlighted(false)
+        } else {
+            setFirstHighlighted(false)
+        }
     }
 
     const onPressOutHandler = e => {
+        console.log('press out')
         e.preventDefault()
-        // Make this item unhighlighted
-        setHighlighted(false)
-        // Make default first item highlighted
-        setFirstHighlighted(true)
+        if (!isFirst) {
+            // Make this item unhighlighted
+            setHighlighted(false)
+            // Make default first item highlighted
+            setFirstHighlighted(true)
+        } else {
+            setFirstHighlighted(true)
+        }
     }
 
     const onPressHandler = e => {
+        console.log('press')
         e.preventDefault()
         onSelect(name)
+
+        if (!isFirst) setFirstHighlighted(true)
     }
 
     return (
         <Pressable
-            style={[styles.item, isHighlighted && styles.highlighted]}
+            style={[
+                styles.item,
+                (isFirst ? isFirstHighlighted : isHighlighted) &&
+                    styles.highlighted
+            ]}
             onPress={onPressHandler}
             onPressIn={onPressInHandler}
             onPressOut={onPressOutHandler}
@@ -78,32 +86,23 @@ const Item = props => {
  *
  * Compares input and option names by standardizing to lowercase
  *
+ * Ensure the parent container is styled with a correct z-index for the dropdown list
+ * to overlap other elements
+ *
  * @param {Object} props
  * @param {Array.<{name: string}>} props.data - Displayed names of items
  * @param {onSelectCallback} props.onSelect - Callback which is called upon an item selection
  * @param {boolean} props.editable - Whether or not the text input is editable
  * @param {string} props.placeholder - The placeholder text for the text input
+ * @param {string} props.input - The search input stateful variable
+ * @param {string} props.setInput - Callback to update stateful input variable
  */
 const SearchableInputDropdown = props => {
-    const {data, onSelect, editable, placeholder} = props
-    const [input, setInput] = useState('')
+    const {data, onSelect, editable, placeholder, input, setInput} = props
     const [filteredData, setFilteredData] = useState(data)
     const [isFocused, setIsFocused] = useState(false)
     const [isFirstHighlighted, setFirstHighlighted] = useState(true)
-
-    // // Fix double tap issue regarding keyboard being forced to dismiss prior to selection being clicked
-    // const virtualizedListEl = useRef(null)
-    // const scrollViewEl = virtualizedListEl.current?.getScrollRef()
-
-    // if (scrollViewEl) {
-    //     scrollViewEl.onStartShouldSetResponderCapture = event => {
-    //         console.log(event)
-    //     }
-
-    //     scrollViewEl.onMoveShouldSetResponderCapture = event => {
-    //         console.log(event)
-    //     }
-    // }
+    const virtualizedListEl = useRef(null)
 
     useEffect(() => {
         // Find data names matching input, if theres any input
@@ -117,13 +116,17 @@ const SearchableInputDropdown = props => {
         // Set new filtered data, and highlight the first
         setFilteredData(matches)
         setFirstHighlighted(true)
+
+        // Scroll back to top of list on input
+        const scrollElement = virtualizedListEl?.current?.getScrollRef()
+        scrollElement?.scrollTo({x: 0, y: 0, animated: false})
     }, [input])
 
     const onSelectWrapper = selected => {
         // Remove element focus
         Keyboard.dismiss()
         // Callback with selected item
-        onSelect(selected)
+        onSelect(data.find(({name}) => name === selected))
         // Set the input
         setInput(selected)
     }
@@ -137,9 +140,12 @@ const SearchableInputDropdown = props => {
 
         // Choose the first item if there is a first item
         if (filteredData.length) {
-            const selected = filteredData[0].name
-            onSelect(selected)
-            setInput(selected)
+            // Find the first item's name
+            const selected = filteredData[0]
+            // Callback with first item
+            onSelect(data.find(({name}) => name === selected.name))
+            // Set the input to the first item
+            setInput(selected.name)
         } else {
             // Otherwise reset input
             setInput('')
@@ -162,8 +168,9 @@ const SearchableInputDropdown = props => {
                 onBlur={onBlurHandler}
                 onSubmitEditing={onSubmitHandler}
             ></TextInput>
-            {filteredData.length && input.length ? (
+            {filteredData.length && input.length && isFocused ? (
                 <VirtualizedList
+                    ref={virtualizedListEl}
                     data={filteredData}
                     keyExtractor={data => data.name}
                     renderItem={data => (
@@ -171,9 +178,8 @@ const SearchableInputDropdown = props => {
                             key={data.item.name}
                             onSelect={onSelectWrapper}
                             name={data.item.name}
-                            isFirstAndHighlighted={
-                                data.index === 0 ? isFirstHighlighted : false
-                            }
+                            isFirst={data.index === 0}
+                            isFirstHighlighted={isFirstHighlighted}
                             setFirstHighlighted={setFirstHighlighted}
                         />
                     )}
@@ -182,6 +188,8 @@ const SearchableInputDropdown = props => {
                     style={styles.list}
                     bounces={false}
                     bouncesZoom={false}
+                    keyboardShouldPersistTaps={'handled'}
+                    keyboardDismissMode={'none'}
                 ></VirtualizedList>
             ) : (
                 <></>
@@ -200,7 +208,8 @@ const styles = new StyleSheet.create({
         borderWidth: 2,
         borderRadius: 10,
         borderColor: '#000',
-        overflow: 'visible'
+        overflow: 'visible',
+        backgroundColor: '#fff'
     },
     input: {},
     list: {
