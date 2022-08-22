@@ -6,12 +6,16 @@ import thunk from 'redux-thunk'
 
 import Main from './components/Main'
 
+// Custom global alert utilizing absolute positioning available on any screen.
+import Alert from './components/Alert'
+
 const store = createStore(rootReducer, applyMiddleware(thunk))
 
 const App = () => {
     return (
         <Provider store={store}>
             <Main />
+            <Alert />
         </Provider>
     )
 }

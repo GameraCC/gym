@@ -1,3 +1,14 @@
 export const SET_SESSION_LOADING = 'SET_SESSION_LOADING'
 export const SET_SESSION_ERROR = 'SET_SESSION_ERROR'
 export const SET_SESSION_TOKEN = 'SET_SESSION_TOKEN'
+
+export const SET_USERNAME = 'SET_USERNAME'
+export const SET_EMAIL = 'SET_EMAIL'
+export const SET_PASSWORD = 'SET_PASSWORD'
+export const SET_FIRST_NAME = 'SET_FIRST_NAME'
+export const SET_LAST_NAME = 'SET_LAST_NAME'
+export const SET_LOCATION = 'SET_LOCATION'
+export const RESET_USER = 'RESET_USER'
+
+export const NEW_ALERT = 'NEW_ALERT'
+export const RESET_ALERT = 'RESET_ALERT'

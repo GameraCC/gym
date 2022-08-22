@@ -1,66 +1,132 @@
-import {useState} from 'react'
+import {useEffect, useState, useRef} from 'react'
 import {StyleSheet, View, Text, TextInput, Pressable} from 'react-native'
 import {useSelector, useDispatch} from 'react-redux'
-import {setSessionError} from '../actions/session'
+import {
+    setUsername,
+    setPassword,
+    setEmail,
+    setFirstName,
+    setLastName,
+    setLocation,
+    resetUser
+} from '../actions/user'
+import {signup} from '../actions/session'
+import {newAlert} from '../actions/alert'
 import SearchableInputDropdown from './SearchableInputDropdown'
 import locations from '../assets/countries_states_cities.json'
+import {
+    usernameConstraint,
+    emailConstraint,
+    passwordConstraint,
+    firstNameConstraint,
+    lastNameConstraint
+} from '../lib/constraints'
 
 const countries = locations.map(({name, iso3}) => ({name, iso3}))
 
-const SignupLocation = () => {
+const SignupLocation = ({navigation}) => {
+    // Component did mount check
+    const isMounted = useRef(false)
+
     // Displayed inputs
     const [countryInput, setCountryInput] = useState('')
     const [stateInput, setStateInput] = useState('')
     const [cityInput, setCityInput] = useState('')
 
-    // Stored selected value outputs
-    const [city, setCity] = useState({})
-    const [state, setState] = useState({})
-    const [country, setCountry] = useState({})
-
     // Available states & cities contingent on selection of state & country
     const [availableStates, setAvailableStates] = useState([])
     const [availableCities, setAvailableCities] = useState([])
 
+    // Button handling
+    const [isHighlighted, setHighlighted] = useState(false)
+    const [canSubmit, setCanSubmit] = useState(false)
+
+    const {city, state, country} = useSelector(state => state.user.location)
+    const valid = useSelector(state => state.session.valid)
+    const isLoading = useSelector(state => state.session.isLoading)
+
+    const dispatch = useDispatch()
+    const changeCity = _city =>
+        dispatch(setLocation({city: _city, state, country}))
+    const changeState = _state =>
+        dispatch(setLocation({city, state: _state, country}))
+    const changeCountry = _country =>
+        dispatch(setLocation({city, state, country: _country}))
+
     const handleCountrySelect = data => {
         // Clear state & city if not the same country
         if (data.iso3 !== country) {
-            setState({})
+            setCanSubmit(false)
+            changeState('')
             setStateInput('')
-            setCity({})
+            setAvailableStates([])
+            changeCity('')
             setCityInput('')
+            setAvailableCities('')
         }
 
         // Set country, using short form country name / code in database
-        setCountry(data.iso3)
+        changeCountry(data.iso3)
 
         // Find states for the given country
         const {states} = locations.find(({name}) => name === data.name)
 
-        // Set available states
-        setAvailableStates(states)
+        if (!states.length) {
+            // If no states, remove city and state input and allow submission
+            setCanSubmit(true)
+        } else {
+            // Set available states and show state input
+            setAvailableStates(states)
+        }
     }
 
     const handleStateSelect = data => {
         // Clear city if not the same state
         if (data.state_code !== state) {
-            setCity({})
+            setCanSubmit(false)
+            changeCity('')
             setCityInput('')
+            setAvailableCities([])
         }
 
         // Set state, using short form state name / code in database
-        setState(data.state_code)
+        changeState(data.state_code)
 
+        // Find cities for chosen state
         const {states} = locations.find(({iso3}) => iso3 === country)
         const {cities} = states.find(({name}) => name === data.name)
-
         const processedCities = cities.map(city => ({name: city}))
 
-        // Find cities for the available states
-        setAvailableCities(processedCities)
+        if (!processedCities.length) {
+            // If no cities, remove city input and allow submission
+            setCanSubmit(true)
+        } else {
+            // Set available cities and show city input
+            setAvailableCities(processedCities)
+        }
     }
 
-    const handleCitySelect = ({name}) => setCity(name)
+    const handleCitySelect = ({name}) => {
+        changeCity(name)
+        setCanSubmit(true)
+    }
+
+    const handleSignup = () => {
+        dispatch(signup())
+    }
+
+    useEffect(() => {
+        // If valid, this will navigate to the home page, and remove this view as valid
+        // is checked in the main component to navigate between authentication & application screen stack
+        if (isMounted.current && !isLoading && !valid) {
+            navigation.reset({
+                index: 0,
+                routes: [{name: 'signup-metadata'}]
+            })
+        } else {
+            isMounted.current = true
+        }
+    }, [isLoading])
 
     return (
         <View style={styles.signup}>
@@ -83,52 +149,115 @@ const SignupLocation = () => {
                     setInput={setCountryInput}
                 />
             </View>
-            <View
-                style={{
-                    width: '50%',
-                    height: '5%',
-                    top: -200,
-                    marginBottom: 50,
-                    zIndex: 2,
-                    elevation: 2
-                }}
-            >
-                <SearchableInputDropdown
-                    editable={availableStates.length > 0}
-                    data={availableStates}
-                    onSelect={handleStateSelect}
-                    placeholder={'State'}
-                    input={stateInput}
-                    setInput={setStateInput}
-                />
-            </View>
-            <View
-                style={{
-                    width: '50%',
-                    height: '5%',
-                    top: -200,
-                    zIndex: 1,
-                    elevation: 1
-                }}
-            >
-                <SearchableInputDropdown
-                    editable={availableCities.length > 0}
-                    data={availableCities}
-                    onSelect={handleCitySelect}
-                    placeholder="City"
-                    input={cityInput}
-                    setInput={setCityInput}
-                />
-            </View>
+            {availableStates.length > 0 && (
+                <View
+                    style={{
+                        width: '50%',
+                        height: '5%',
+                        top: -200,
+                        marginBottom: 50,
+                        zIndex: 2,
+                        elevation: 2
+                    }}
+                >
+                    <SearchableInputDropdown
+                        editable={true}
+                        data={availableStates}
+                        onSelect={handleStateSelect}
+                        placeholder={'State'}
+                        input={stateInput}
+                        setInput={setStateInput}
+                    />
+                </View>
+            )}
+            {availableCities.length > 0 && (
+                <View
+                    style={{
+                        width: '50%',
+                        height: '5%',
+                        top: -200,
+                        zIndex: 1,
+                        elevation: 1
+                    }}
+                >
+                    <SearchableInputDropdown
+                        editable={true}
+                        data={availableCities}
+                        onSelect={handleCitySelect}
+                        placeholder="City"
+                        input={cityInput}
+                        setInput={setCityInput}
+                    />
+                </View>
+            )}
+            {canSubmit && (
+                <Pressable
+                    onPressIn={() => setHighlighted(true)}
+                    onPressOut={() => setHighlighted(false)}
+                    style={[styles.button, isHighlighted && styles.highlighted]}
+                    android_disableSound={true}
+                    onPress={handleSignup}
+                >
+                    <Text>Signup</Text>
+                </Pressable>
+            )}
         </View>
     )
 }
 
 const SignupNames = ({navigation}) => {
-    const [firstName, setFirstName] = useState('')
-    const [lastName, setLastName] = useState('')
+    const [isHighlighted, setHighlighted] = useState(false)
 
-    const handleContinue = () => navigation.navigate('signup-location')
+    // Underscores are used for consistency with database schema
+    const first_name = useSelector(state => state.user.first_name)
+    const last_name = useSelector(state => state.user.last_name)
+
+    const dispatch = useDispatch()
+    const changeFirstName = name => dispatch(setFirstName(name))
+    const changeLastName = name => dispatch(setLastName(name))
+
+    const handleContinue = () => {
+        if (!first_name)
+            dispatch(
+                newAlert({
+                    kind: 'error',
+                    title: 'Signup Error',
+                    message: 'First name required'
+                })
+            )
+
+        if (!last_name)
+            dispatch(
+                newAlert({
+                    kind: 'error',
+                    title: 'Signup Error',
+                    message: 'Last name required'
+                })
+            )
+
+        // Validate constraints on input, prompt error if constraints not met
+        const firstNameConstraintCheck = firstNameConstraint(first_name)
+        if (firstNameConstraintCheck !== true)
+            return dispatch(
+                newAlert({
+                    kind: 'error',
+                    title: 'Signup Error',
+                    message: firstNameConstraintCheck
+                })
+            )
+
+        const lastNameConstraintCheck = lastNameConstraint(last_name)
+        if (lastNameConstraintCheck !== true)
+            return dispatch(
+                newAlert({
+                    kind: 'error',
+                    title: 'Signup Error',
+                    message: lastNameConstraintCheck
+                })
+            )
+
+        navigation.navigate('signup-location')
+    }
 
     return (
         <View style={styles.signup}>
@@ -140,21 +269,23 @@ const SignupNames = ({navigation}) => {
                 autocomplete="name-given"
                 keyboardType="default"
                 placeholder="First Name"
-                onChangeText={setFirstName}
-                value={firstName}
+                onChangeText={changeFirstName}
+                value={first_name}
             ></TextInput>
             <TextInput
                 style={styles.input}
                 autocomplete="name-family"
                 keyboardType="default"
                 placeholder="Last Name"
-                onChangeText={setLastName}
-                value={lastName}
+                onChangeText={changeLastName}
+                value={last_name}
             ></TextInput>
             <Pressable
-                style={styles.button}
+                onPressIn={() => setHighlighted(true)}
+                onPressOut={() => setHighlighted(false)}
+                style={[styles.button, isHighlighted && styles.highlighted]}
                 android_disableSound={true}
-                onPress={() => handleContinue()}
+                onPress={handleContinue}
             >
                 <Text>Continue</Text>
             </Pressable>
@@ -163,16 +294,91 @@ const SignupNames = ({navigation}) => {
 }
 
 const SignupMetadata = ({navigation}) => {
-    const [email, setEmail] = useState('')
-    const [username, setUsername] = useState('')
-    const [password, setPassword] = useState('')
+    const [isContinueHighlighted, setContinueHighlighted] = useState(false)
+    const [isLoginHighlighted, setLoginHighlighted] = useState(false)
 
-    const error = useSelector(state => state.session.error)
+    const email = useSelector(state => state.user.email)
+    const username = useSelector(state => state.user.username)
+    const password = useSelector(state => state.user.password)
+
     const dispatch = useDispatch()
+    const changeEmail = email => {
+        dispatch(setEmail(email))
+    }
+    const changeUsername = username => {
+        dispatch(setUsername(username))
+    }
+    const changePassword = password => {
+        dispatch(setPassword(password))
+    }
+    const resetUserInfo = () => dispatch(resetUser())
 
-    const handleContinue = () => navigation.navigate('signup-names')
+    const handleContinue = () => {
+        // Validate constraints on input, prompt error if constraints not met
+        if (!email)
+            return dispatch(
+                newAlert({
+                    kind: 'error',
+                    title: 'Signup Error',
+                    message: 'Email required'
+                })
+            )
+        if (!username)
+            return dispatch(
+                newAlert({
+                    kind: 'error',
+                    title: 'Signup Error',
+                    message: 'Username required'
+                })
+            )
+        if (!password)
+            return dispatch(
+                newAlert({
+                    kind: 'error',
+                    title: 'Signup Error',
+                    message: 'Password required'
+                })
+            )
 
-    const resetError = () => dispatch(setSessionError(''))
+        const emailConstraintCheck = emailConstraint(email)
+        if (emailConstraintCheck !== true)
+            return dispatch(
+                newAlert({
+                    kind: 'error',
+                    title: 'Signup Error',
+                    message: emailConstraintCheck
+                })
+            )
+
+        const usernameConstraintCheck = usernameConstraint(username)
+        if (usernameConstraintCheck !== true)
+            return dispatch(
+                newAlert({
+                    kind: 'error',
+                    title: 'Signup Error',
+                    message: usernameConstraintCheck
+                })
+            )
+
+        const passwordConstraintCheck = passwordConstraint(password)
+        if (passwordConstraintCheck !== true)
+            return dispatch(
+                newAlert({
+                    kind: 'error',
+                    title: 'Signup Error',
+                    message: passwordConstraintCheck
+                })
+            )
+
+        navigation.navigate('signup-names')
+    }
+    const handleLogin = () => {
+        resetUserInfo()
+        navigation.reset({
+            index: 0,
+            routes: [{name: 'login'}]
+        })
+    }
 
     return (
         <View style={styles.signup}>
@@ -181,10 +387,11 @@ const SignupMetadata = ({navigation}) => {
             </View>
             <TextInput
                 style={styles.input}
+                title="Email"
                 autoComplete="email"
                 keyboardType="email-address"
                 placeholder="Email Address"
-                onChangeText={setEmail}
+                onChangeText={changeEmail}
                 value={email}
             ></TextInput>
             <TextInput
@@ -192,7 +399,7 @@ const SignupMetadata = ({navigation}) => {
                 autoComplete="username"
                 keyboardType="default"
                 placeholder="Username"
-                onChangeText={setUsername}
+                onChangeText={changeUsername}
                 value={username}
             ></TextInput>
             <TextInput
@@ -200,34 +407,34 @@ const SignupMetadata = ({navigation}) => {
                 autoComplete="password-new"
                 keyboardType="default"
                 placeholder="Password"
-                onChangeText={setPassword}
+                onChangeText={changePassword}
                 value={password}
             ></TextInput>
             <Pressable
-                style={styles.button}
+                onPressIn={() => setContinueHighlighted(true)}
+                onPressOut={() => setContinueHighlighted(false)}
+                style={[
+                    styles.button,
+                    isContinueHighlighted && styles.highlighted
+                ]}
                 android_disableSound={true}
-                onPress={() => handleContinue()}
+                onPress={handleContinue}
             >
                 <Text>Continue</Text>
             </Pressable>
             <Text>OR</Text>
             <Pressable
-                style={styles.button}
+                onPressIn={() => setLoginHighlighted(true)}
+                onPressOut={() => setLoginHighlighted(false)}
+                style={[
+                    styles.button,
+                    isLoginHighlighted && styles.highlighted
+                ]}
                 android_disableSound={true}
-                onPress={() => {
-                    setUsername('')
-                    setEmail('')
-                    setPassword('')
-                    resetError()
-                    navigation.reset({
-                        index: 0,
-                        routes: [{name: 'login'}]
-                    })
-                }}
+                onPress={handleLogin}
             >
                 <Text>Login</Text>
             </Pressable>
-            <Text>{error}</Text>
         </View>
     )
 }
@@ -244,12 +451,24 @@ const styles = new StyleSheet.create({
     input: {
         flex: 1
     },
+    text: {
+        width: 256,
+        height: 24
+    },
     button: {
-        width: 100,
-        height: 200,
+        width: '50%',
+        height: '5%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
         color: '#ffffff',
         backgroundColor: '#ffffff',
-        flex: 1
+        borderWidth: 2,
+        borderRadius: 10,
+        borderColor: '#000'
+    },
+    highlighted: {
+        backgroundColor: '#0091FF'
     }
 })
 

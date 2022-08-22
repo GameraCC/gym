@@ -25,7 +25,6 @@ const Item = props => {
     let [isHighlighted, setHighlighted] = useState(isFirst)
 
     const onPressInHandler = e => {
-        console.log('press in')
         e.preventDefault()
         if (!isFirst) {
             // Make this item highlighted
@@ -38,7 +37,6 @@ const Item = props => {
     }
 
     const onPressOutHandler = e => {
-        console.log('press out')
         e.preventDefault()
         if (!isFirst) {
             // Make this item unhighlighted
@@ -51,7 +49,6 @@ const Item = props => {
     }
 
     const onPressHandler = e => {
-        console.log('press')
         e.preventDefault()
         onSelect(name)
 

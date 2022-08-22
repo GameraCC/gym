@@ -1,8 +1,7 @@
 import {
     SET_SESSION_LOADING,
     SET_SESSION_TOKEN,
-    SET_SESSION_ERROR,
-    SET_SIGNING_UP
+    SET_SESSION_ERROR
 } from '../actions/types'
 
 /**
@@ -12,8 +11,7 @@ import {
 const initialState = {
     valid: false, // Whether or not the session is valid
     token: '', // The session token
-    isLoading: false,
-    error: ''
+    isLoading: false
 }
 
 const session = (state = initialState, action) => {
@@ -28,7 +26,6 @@ const session = (state = initialState, action) => {
             state = {
                 ...state,
                 isLoading: false,
-                error: '',
                 token: action.session,
                 valid: true
             }
@@ -37,7 +34,6 @@ const session = (state = initialState, action) => {
             state = {
                 ...state,
                 isLoading: false,
-                error: action.error,
                 valid: false
             }
             break

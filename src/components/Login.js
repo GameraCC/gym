@@ -1,20 +1,70 @@
 import {StyleSheet, View, Text, TextInput, Pressable} from 'react-native'
 import {useState} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
-import {login, setSessionError} from '../actions/session'
+import {login} from '../actions/session'
+import {setUsername, setPassword, resetUser} from '../actions/user'
+import {newAlert} from '../actions/alert'
 
 const Login = ({navigation}) => {
-    const [username, setUsername] = useState('')
-    const [password, setPassword] = useState('')
+    const [isSignupHighlighted, setSignupHighlighted] = useState(false)
+    const [isLoginHighlighted, setLoginHighlighted] = useState(false)
 
-    const error = useSelector(state => state.session.error)
+    const username = useSelector(state => state.user.username)
+    const password = useSelector(state => state.user.password)
+
     const dispatch = useDispatch()
+    const changeUsername = username => dispatch(setUsername(username))
+    const changePassword = password => dispatch(setPassword(password))
+    const resetUserInfo = () => dispatch(resetUser())
 
-    const handleAuth = () => {
-        dispatch(login(username, password))
+    const handleLogin = () => {
+        // Validate constraints on input, prompt error if constraints not met
+        if (!username)
+            return dispatch(
+                newAlert({
+                    kind: 'error',
+                    title: 'Login Error',
+                    message: 'Username required'
+                })
+            )
+        if (!password)
+            return dispatch(
+                newAlert({
+                    kind: 'error',
+                    title: 'Login Error',
+                    message: 'Password required'
+                })
+            )
+
+        const usernameConstraintCheck = usernameConstraint(username)
+        if (usernameConstraintCheck !== true)
+            return dispatch(
+                newAlert({
+                    kind: 'error',
+                    title: 'Login Error',
+                    message: usernameConstraintCheck
+                })
+            )
+
+        const passwordConstraintCheck = passwordConstraint(password)
+        if (passwordConstraintCheck !== true)
+            return dispatch(
+                newAlert({
+                    kind: 'error',
+                    title: 'Login Error',
+                    message: passwordConstraintCheck
+                })
+            )
+
+        dispatch(login({username, password}))
     }
-
-    const resetError = () => dispatch(setSessionError(''))
+    const handleSignup = () => {
+        resetUserInfo()
+        navigation.reset({
+            index: 0,
+            routes: [{name: 'signup-metadata'}]
+        })
+    }
 
     return (
         <View style={styles.login}>
@@ -26,7 +76,7 @@ const Login = ({navigation}) => {
                 autoComplete="username"
                 keyboardType="default"
                 placeholder="Username"
-                onChangeText={setUsername}
+                onChangeText={changeUsername}
                 value={username}
             ></TextInput>
             <TextInput
@@ -34,33 +84,34 @@ const Login = ({navigation}) => {
                 autoComplete="password"
                 keyboardType="default"
                 placeholder="Password"
-                onChangeText={setPassword}
+                onChangeText={changePassword}
                 value={password}
             ></TextInput>
             <Pressable
-                style={styles.button}
+                onPressIn={() => setLoginHighlighted(true)}
+                onPressOut={() => setLoginHighlighted(false)}
+                style={[
+                    styles.button,
+                    isLoginHighlighted && styles.highlighted
+                ]}
                 android_disableSound={true}
-                onPress={() => handleAuth()}
+                onPress={handleLogin}
             >
                 <Text>Login</Text>
             </Pressable>
             <Text>OR</Text>
             <Pressable
-                style={styles.button}
+                onPressIn={() => setSignupHighlighted(true)}
+                onPressOut={() => setSignupHighlighted(false)}
+                style={[
+                    styles.button,
+                    isSignupHighlighted && styles.highlighted
+                ]}
                 android_disableSound={true}
-                onPress={() => {
-                    setUsername('')
-                    setPassword('')
-                    resetError()
-                    navigation.reset({
-                        index: 0,
-                        routes: [{name: 'signup-metadata'}]
-                    })
-                }}
+                onPress={handleSignup}
             >
                 <Text>Signup</Text>
             </Pressable>
-            <Text>{error}</Text>
         </View>
     )
 }
@@ -77,11 +128,19 @@ const styles = StyleSheet.create({
         flex: 1
     },
     button: {
-        width: 100,
-        height: 200,
+        width: '50%',
+        height: '5%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
         color: '#ffffff',
         backgroundColor: '#ffffff',
-        flex: 1
+        borderWidth: 2,
+        borderRadius: 10,
+        borderColor: '#000'
+    },
+    highlighted: {
+        backgroundColor: '#0091FF'
     }
 })
 

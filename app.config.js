@@ -29,10 +29,9 @@ const config = {
             favicon: './src/assets/favicon.png'
         },
         extra: {
-            HOST:
-                process.env.STAGING === 'true'
-                    ? 'eoqmywmvv0.execute-api.us-east-1.amazonaws.com'
-                    : ''
+            HOST: process.env.STAGING.includes('true')
+                ? 'eoqmywmvv0.execute-api.us-east-1.amazonaws.com'
+                : ''
         }
     }
 }

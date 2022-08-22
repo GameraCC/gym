@@ -3,11 +3,17 @@
   "version": "1.0.0",
   "main": "./src/App.js",
   "scripts": {
-    "start": "set STAGING=true && expo start",
-    "android": "set STAGING=true && expo && start --android",
-    "ios": "set STAGING=true && expo start --ios",
-    "web": "set STAGING=true && expo start --web",
-    "eject": "set STAGING=true && expo eject"
+    "start-mac": "STAGING=true expo start",
+    "android-mac": "STAGING=true expo start --android",
+    "ios-mac": "STAGING=true expo start --ios",
+    "web-mac": "STAGING=true expo start --web",
+    "eject-mac": "STAGING=true expo eject",
+
+    "start-win": "set STAGING=true && expo start",
+    "android-win": "set STAGING=true && expo start --android",
+    "ios-win": "set STAGING=true && expo start --ios",
+    "web-win": "set STAGING=true && expo start --web",
+    "eject-win": "set STAGING=true && expo eject"
   },
   "dependencies": {
     "@react-navigation/native": "^6.0.11",

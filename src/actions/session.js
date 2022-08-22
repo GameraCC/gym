@@ -1,9 +1,5 @@
-import {
-    SET_SESSION_LOADING,
-    SET_SESSION_ERROR,
-    SET_SESSION_TOKEN,
-    SET_SIGNING_UP
-} from './types'
+import {SET_SESSION_LOADING, SET_SESSION_TOKEN} from './types'
+import {newAlert} from './alert'
 import axios from 'axios'
 import Constants from 'expo-constants'
 
@@ -19,23 +15,113 @@ const setSessionToken = session => ({
     session
 })
 
-const setSessionError = error => ({
-    type: SET_SESSION_ERROR,
-    error
-})
+const login =
+    ({username, password}) =>
+    async dispatch => {
+        // Change loading status
 
-const login = (username, password) => async dispatch => {
-    // Change loading status
-    dispatch(setSessionLoading(false))
+        const data = JSON.stringify({
+            username,
+            password
+        })
+
+        dispatch(setSessionLoading(true))
+
+        axios({
+            url: `https://${HOST}/login`,
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
+            data
+        })
+            .then(response => {
+                // 2xx status code
+                // Get the session token
+                const {session} = response.data
+
+                // Set the session token
+                dispatch(setSessionToken(session))
+            })
+            .catch(err => {
+                // Handle various errors for non 2xx status codes
+                if (err.response) {
+                    const data = err.response?.data || null
+
+                    if (
+                        [400, 500].includes(err.response.status) &&
+                        data?.message
+                    )
+                        dispatch(
+                            newAlert({
+                                kind: 'error',
+                                title: 'Login Error',
+                                message: data.message
+                            })
+                        )
+                    else if (err.response.status === 401)
+                        dispatch(
+                            newAlert({
+                                kind: 'error',
+                                title: 'Login Error',
+                                message: 'Invalid username or password'
+                            })
+                        )
+                    else if (err.response.status === 500)
+                        dispatch(
+                            newAlert({
+                                kind: 'error',
+                                title: 'Login Error',
+                                message: 'Internal server error'
+                            })
+                        )
+                    else
+                        dispatch(
+                            newAlert({
+                                kind: 'error',
+                                title: 'Login Error',
+                                message: 'Invalid server error'
+                            })
+                        )
+                } else
+                    dispatch(
+                        newAlert({
+                            kind: 'error',
+                            title: 'Login Error',
+                            message: 'Fatal error logging in'
+                        })
+                    )
+            })
+    }
+
+const signup = () => async (dispatch, getState) => {
+    const {
+        user: {
+            username,
+            email,
+            password,
+            first_name,
+            last_name,
+            location: {city, state, country}
+        }
+    } = getState()
 
     const data = JSON.stringify({
         username,
-        password
+        email,
+        password,
+        first_name,
+        last_name,
+        city,
+        state,
+        country
     })
 
+    dispatch(setSessionLoading(true))
+
     axios({
+        url: `https://${HOST}/signup`,
         method: 'POST',
-        url: `https://${HOST}/login`,
         headers: {
             'content-type': 'application/json'
         },
@@ -55,14 +141,38 @@ const login = (username, password) => async dispatch => {
                 const data = err.response?.data || null
 
                 if ([400, 500].includes(err.response.status) && data?.message)
-                    dispatch(setSessionError(data.message))
-                else if (err.response.status === 401)
-                    dispatch(setSessionError('Invalid username or password'))
+                    dispatch(
+                        newAlert({
+                            kind: 'error',
+                            title: 'Signup Error',
+                            message: data.message
+                        })
+                    )
                 else if (err.response.status === 500)
-                    dispatch(setSessionError('Internal server error'))
-                else dispatch(setSessionError('Invalid server error'))
-            } else dispatch(setSessionError('Fatal error logging in'))
+                    dispatch(
+                        newAlert({
+                            kind: 'error',
+                            title: 'Signup Error',
+                            message: 'Internal server error'
+                        })
+                    )
+                else
+                    dispatch(
+                        newAlert({
+                            kind: 'error',
+                            title: 'Signup Error',
+                            message: 'Invalid server error'
+                        })
+                    )
+            } else
+                dispatch(
+                    newAlert({
+                        kind: 'error',
+                        title: 'Signup Error',
+                        message: 'Fatal error logging in'
+                    })
+                )
         })
 }
 
-export {login, setSessionError}
+export {login, signup}

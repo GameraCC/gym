@@ -9,7 +9,7 @@ import {SignupMetadata, SignupNames, SignupLocation} from './Signup'
 const Stack = createNativeStackNavigator()
 
 const Main = () => {
-    const isValid = useSelector(state => state.session.isValid)
+    const isValid = useSelector(state => state.session.valid)
 
     return (
         <NavigationContainer>
