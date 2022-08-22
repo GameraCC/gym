@@ -5,6 +5,9 @@ const {
     SET_FIRST_NAME,
     SET_LAST_NAME,
     SET_LOCATION,
+    SET_PROFILE_PICTURE,
+    SET_BIO,
+    HYDRATE_USER,
     RESET_USER
 } = require('../actions/types')
 
@@ -44,6 +47,40 @@ const setLocation = ({country, city, state}) => ({
     }
 })
 
+const setProfilePicture = profile_picture => ({
+    type: SET_PROFILE_PICTURE,
+    profile_picture
+})
+
+const setBio = bio => ({
+    type: SET_BIO,
+    bio
+})
+
+// Hydrates user info with login response metadata
+const hydrateUser = ({
+    email,
+    username,
+    first_name,
+    last_name,
+    location: {city, state, country},
+    profile_picture,
+    bio
+}) => ({
+    type: HYDRATE_USER,
+    email,
+    username,
+    first_name,
+    last_name,
+    location: {
+        city,
+        state,
+        country
+    },
+    profile_picture,
+    bio
+})
+
 const resetUser = () => ({
     type: RESET_USER
 })
@@ -55,5 +92,8 @@ export {
     setFirstName,
     setLastName,
     setLocation,
+    setProfilePicture,
+    setBio,
+    hydrateUser,
     resetUser
 }

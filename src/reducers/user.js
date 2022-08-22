@@ -5,6 +5,9 @@ const {
     SET_FIRST_NAME,
     SET_LAST_NAME,
     SET_LOCATION,
+    SET_PROFILE_PICTURE,
+    SET_BIO,
+    HYDRATE_USER,
     RESET_USER
 } = require('../actions/types')
 
@@ -22,7 +25,9 @@ const initialState = {
         country: '',
         state: '',
         city: ''
-    }
+    },
+    profile_picture: '',
+    bio: ''
 }
 
 const user = (state = initialState, action) => {
@@ -63,12 +68,38 @@ const user = (state = initialState, action) => {
                 location: action.location
             }
             break
+        case SET_PROFILE_PICTURE:
+            state = {
+                ...state,
+                profile_picture: action.profile_picture
+            }
+            break
+        case SET_BIO:
+            state = {
+                ...state,
+                bio: action.bio
+            }
+            break
+        case HYDRATE_USER:
+            state = {
+                ...state,
+                email: action.email,
+                username: action.username,
+                first_name: action.first_name,
+                last_name: action.last_name,
+                location: action.location,
+                profile_picture: action.profile_picture,
+                bio: action.bio
+            }
+            break
         case RESET_USER:
             state = {
                 ...initialState
             }
             break
     }
+
+    console.log(state)
 
     return state
 }

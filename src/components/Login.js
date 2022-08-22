@@ -3,6 +3,7 @@ import {useState} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import {login} from '../actions/session'
 import {setUsername, setPassword, resetUser} from '../actions/user'
+import {usernameConstraint, passwordConstraint} from '../lib/constraints'
 import {newAlert} from '../actions/alert'
 
 const Login = ({navigation}) => {

@@ -1,4 +1,5 @@
 import {SET_SESSION_LOADING, SET_SESSION_TOKEN} from './types'
+import {hydrateUser} from './user'
 import {newAlert} from './alert'
 import axios from 'axios'
 import Constants from 'expo-constants'
@@ -38,7 +39,10 @@ const login =
             .then(response => {
                 // 2xx status code
                 // Get the session token
-                const {session} = response.data
+                const {session, user} = response.data
+
+                // Hydrate user info
+                dispatch(hydrateUser(user))
 
                 // Set the session token
                 dispatch(setSessionToken(session))
