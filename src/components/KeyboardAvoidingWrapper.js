@@ -1,15 +1,18 @@
-import {Platform, KeyboardAvoidingView} from 'react-native'
+import {Platform, View, KeyboardAvoidingView} from 'react-native'
 
 const KeyboardAvoidingWrapper = props => {
     const {children, ...otherProps} = props
-    return (
+    return Platform.OS === 'ios' ? (
         <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            behavior="padding"
             keyboardVerticalOffset={8}
             {...otherProps}
         >
             {children}
         </KeyboardAvoidingView>
+    ) : (
+        // Android already implements keyboard avoiding view behavior well enough
+        <View {...otherProps}>{children}</View>
     )
 }
 

@@ -182,8 +182,7 @@ const SignupLocation = ({navigation}) => {
                     {
                         height:
                             48 + (isStateVisible && 48) + (isCityVisible && 48),
-                        zIndex: 4,
-                        elevation: 4
+                        zIndex: 4
                     }
                 ]} // Grant 48 DPs of height for each visible button
             >
@@ -201,10 +200,7 @@ const SignupLocation = ({navigation}) => {
                             dropdownStyles.dropdown,
                             isStateVisible && styles.inputDivide
                         ], // Add divider to dropdown
-                        wrapper: [
-                            dropdownStyles.wrapper,
-                            {zIndex: 3, elevation: 3}
-                        ]
+                        wrapper: [dropdownStyles.wrapper, {zIndex: 3}]
                     }}
                 />
                 {isStateVisible && (
@@ -221,10 +217,7 @@ const SignupLocation = ({navigation}) => {
                                 dropdownStyles.dropdown,
                                 isCityVisible && styles.inputDivide // Add divider to dropdown
                             ],
-                            wrapper: [
-                                dropdownStyles.wrapper,
-                                {zIndex: 2, elevation: 2}
-                            ]
+                            wrapper: [dropdownStyles.wrapper, {zIndex: 2}]
                         }}
                     />
                 )}
@@ -238,10 +231,7 @@ const SignupLocation = ({navigation}) => {
                         setInput={setCityInput}
                         style={{
                             ...dropdownStyles,
-                            wrapper: [
-                                dropdownStyles.wrapper,
-                                {zIndex: 1, elevation: 1}
-                            ]
+                            wrapper: [dropdownStyles.wrapper, {zIndex: 1}]
                         }}
                     />
                 )}

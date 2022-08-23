@@ -121,8 +121,6 @@ const signup = () => async (dispatch, getState) => {
         country
     })
 
-    console.log(data)
-
     dispatch(setSessionLoading(true))
 
     axios({
