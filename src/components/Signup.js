@@ -69,6 +69,8 @@ const SignupLocation = ({navigation}) => {
         dispatch(setLocation({city, state: _state, country}))
     const changeCountry = _country =>
         dispatch(setLocation({city, state, country: _country}))
+    const resetCityState = () =>
+        dispatch(setLocation({country, state: '', city: ''}))
 
     const handleCountrySelect = data => {
         // Clear state & city if not the same country
@@ -144,6 +146,14 @@ const SignupLocation = ({navigation}) => {
     }
 
     const handleSignup = () => {
+        // If no country, state, or city ensure the global redux state has no values set to it
+        // This can occur when the user selects a state, navigates back to the previous navigation stack screen
+        // then selects a country which has no states or cities
+
+        if (!countryInput) changeCountry('')
+        else if (countryInput && !cityInput && !stateInput) resetCityState('')
+        else if (!stateInput && cityInput) changeCity('')
+
         dispatch(signup())
     }
 
@@ -553,7 +563,7 @@ const styles = StyleSheet.create({
     signup: {
         width: '100%',
         height: '100%',
-        flexDirection: 'center',
+        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: background
@@ -561,7 +571,7 @@ const styles = StyleSheet.create({
     logo: {
         width: 72,
         height: 72,
-        marginTop: '50%'
+        marginTop: '40%'
     },
     input: {
         flex: 1,
@@ -574,14 +584,14 @@ const styles = StyleSheet.create({
     },
     inputDivide: {
         borderColor: black,
-        borderBottomWidth: 2
+        borderBottomWidth: 1
     },
     inputContainer: {
         width: '60%',
         marginTop: '10%',
         marginBottom: '10%',
         borderColor: black,
-        borderWidth: 2,
+        borderWidth: 1,
         borderRadius: 7
     },
     metadataInputContainer: {
@@ -612,11 +622,10 @@ const styles = StyleSheet.create({
         width: '100%',
         backgroundColor: black,
         borderColor: black,
-        borderWidth: 2,
+        borderWidth: 1,
         borderRadius: 5
     },
     buttonText: {
-        fontFamily: 'Helvetica',
         color: white,
         fontSize: 16
     },

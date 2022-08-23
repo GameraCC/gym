@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react'
 import {Keyboard, StyleSheet, View, Pressable, Text} from 'react-native'
 import {useSelector, useDispatch} from 'react-redux'
 import {resetAlert} from '../actions/alert'
-import {black, green, red} from './colors'
+import {black, green, red, white} from './colors'
 
 const ErrorAlert = props => {
     const {title, message} = props
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontWeight: 'bold',
         fontSize: 16,
-        color: '#000'
+        color: black
     },
     message: {
         width: '100%',
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
         width: '100%',
         textAlign: 'center',
         fontSize: 16,
-        color: '#fff'
+        color: white
     },
     continueButtonHighlighted: {
         backgroundColor: black,

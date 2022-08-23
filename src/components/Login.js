@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     login: {
         width: '100%',
         height: '100%',
-        flexDirection: 'center',
+        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: background
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
     },
     inputDivide: {
         borderColor: black,
-        borderBottomWidth: 2
+        borderBottomWidth: 1
     },
     inputContainer: {
         width: '60%',
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
         marginTop: '10%',
         marginBottom: '10%',
         borderColor: black,
-        borderWidth: 2,
+        borderWidth: 1,
         borderRadius: 7
     },
     buttonContainer: {
@@ -203,11 +203,10 @@ const styles = StyleSheet.create({
         width: '100%',
         backgroundColor: black,
         borderColor: black,
-        borderWidth: 2,
+        borderWidth: 1,
         borderRadius: 5
     },
     buttonText: {
-        fontFamily: 'Helvetica',
         color: white,
         fontSize: 16
     },
