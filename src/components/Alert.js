@@ -1,8 +1,8 @@
-import {useState} from 'react'
-import {StyleSheet, View, Pressable, Text} from 'react-native'
+import {useEffect, useState} from 'react'
+import {Keyboard, StyleSheet, View, Pressable, Text} from 'react-native'
 import {useSelector, useDispatch} from 'react-redux'
 import {resetAlert} from '../actions/alert'
-import {green, red} from './colors'
+import {black, green, red} from './colors'
 
 const ErrorAlert = props => {
     const {title, message} = props
@@ -15,12 +15,7 @@ const ErrorAlert = props => {
 
     return (
         <View style={styles.wrapper}>
-            <View
-                style={[
-                    styles.container,
-                    isContinueHighlighted && styles.containerHighlighted
-                ]}
-            >
+            <View style={[styles.container]}>
                 <Text style={styles.title} numberOfLines={1}>
                     {title}
                 </Text>
@@ -37,14 +32,7 @@ const ErrorAlert = props => {
                             styles.continueButtonHighlighted
                     ]}
                 >
-                    <Text
-                        style={[
-                            styles.continue,
-                            isContinueHighlighted && styles.continueHighlighted
-                        ]}
-                    >
-                        Continue
-                    </Text>
+                    <Text style={[styles.continue]}>Continue</Text>
                 </Pressable>
             </View>
         </View>
@@ -57,6 +45,10 @@ const Alert = () => {
     const title = useSelector(state => state.alert.title)
     const message = useSelector(state => state.alert.message)
 
+    useEffect(() => {
+        Keyboard.dismiss()
+    }, [isVisible])
+
     if (isVisible) {
         switch (kind) {
             case 'error':
@@ -67,7 +59,7 @@ const Alert = () => {
     } else return <></>
 }
 
-const styles = new StyleSheet.create({
+const styles = StyleSheet.create({
     wrapper: {
         width: '100%',
         height: '100%',
@@ -90,12 +82,7 @@ const styles = new StyleSheet.create({
         backgroundColor: '#f8f8f8',
         width: '75%',
         height: '20%',
-        borderRadius: 12,
-        borderWidth: 1.5,
-        borderColor: red
-    },
-    containerHighlighted: {
-        borderColor: green
+        borderRadius: 12
     },
     title: {
         width: '100%',
@@ -124,8 +111,6 @@ const styles = new StyleSheet.create({
         display: 'flex',
         justifyContent: 'center',
         backgroundColor: red,
-        borderColor: red,
-        borderWidth: 1.5,
         borderBottomRightRadius: 10,
         borderBottomLeftRadius: 10
     },
@@ -136,11 +121,8 @@ const styles = new StyleSheet.create({
         color: '#fff'
     },
     continueButtonHighlighted: {
-        backgroundColor: green,
-        borderColor: green
-    },
-    continueHighlighted: {
-        color: '#000'
+        backgroundColor: black,
+        borderColor: black
     }
 })
 

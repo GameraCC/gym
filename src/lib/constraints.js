@@ -53,16 +53,24 @@ const usernameConstraint = username => {
     return true
 }
 
-// First name must be less than 32 characters
+// First name must be less than 32 characters & only contain letters of the alphabet
 const firstNameConstraint = first_name => {
+    // Check whether or not name contains any letter which is not part of the alphabet
+    if (/[^a-zA-Z]/.test(first_name))
+        return 'First names can only include letters'
+
     if (first_name.length > 32)
         return 'First name must be less than 32 characters'
 
     return true
 }
 
-// First name must be less than 32 characters
+// First name must be less than 32 characters & only contain letters of the alphabet
 const lastNameConstraint = last_name => {
+    // Check whether or not name contains any letter which is not part of the alphabet
+    if (/[^a-zA-Z]/.test(last_name))
+        return 'Last names can only include letters'
+
     if (last_name.length > 32)
         return 'Last name must be less than 32 characters'
 

@@ -4,7 +4,7 @@ const Home = () => {
     return <View style={styles.home}></View>
 }
 
-const styles = new StyleSheet.create({
+const styles = StyleSheet.create({
     home: {
         width: '100%',
         height: '100%'

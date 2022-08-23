@@ -1,5 +1,14 @@
 import {useEffect, useState, useRef} from 'react'
-import {StyleSheet, View, Text, TextInput, Pressable} from 'react-native'
+import {
+    Platform,
+    Keyboard,
+    StyleSheet,
+    Image,
+    View,
+    Text,
+    TextInput,
+    Pressable
+} from 'react-native'
 import {useSelector, useDispatch} from 'react-redux'
 import {
     setUsername,
@@ -13,6 +22,7 @@ import {
 import {signup} from '../actions/session'
 import {newAlert} from '../actions/alert'
 import SearchableInputDropdown from './SearchableInputDropdown'
+import {background, black, white} from './colors'
 import locations from '../assets/countries_states_cities.json'
 import {
     usernameConstraint,
@@ -37,6 +47,12 @@ const SignupLocation = ({navigation}) => {
     const [availableStates, setAvailableStates] = useState([])
     const [availableCities, setAvailableCities] = useState([])
 
+    // State to manage whether state & cities are visible and editable
+    const [isStateVisible, setStateVisible] = useState(true)
+    const [isStateEditable, setStateEditable] = useState(false)
+    const [isCityVisible, setCityVisible] = useState(true)
+    const [isCityEditable, setCityEditable] = useState(false)
+
     // Button handling
     const [isHighlighted, setHighlighted] = useState(false)
     const [canSubmit, setCanSubmit] = useState(false)
@@ -57,9 +73,11 @@ const SignupLocation = ({navigation}) => {
         // Clear state & city if not the same country
         if (data.iso3 !== country) {
             setCanSubmit(false)
+
             changeState('')
             setStateInput('')
             setAvailableStates([])
+
             changeCity('')
             setCityInput('')
             setAvailableCities('')
@@ -74,9 +92,17 @@ const SignupLocation = ({navigation}) => {
         if (!states.length) {
             // If no states, remove city and state input and allow submission
             setCanSubmit(true)
+            setStateEditable(false)
+            setStateVisible(false)
+            setCityEditable(false)
+            setCityVisible(false)
         } else {
-            // Set available states and show state input
+            // Set available states and show state enabled input & city disabled input
             setAvailableStates(states)
+            setStateEditable(true)
+            setStateVisible(true)
+            setCityVisible(true)
+            setCityEditable(false)
         }
     }
 
@@ -84,6 +110,7 @@ const SignupLocation = ({navigation}) => {
         // Clear city if not the same state
         if (data.state_code !== state) {
             setCanSubmit(false)
+
             changeCity('')
             setCityInput('')
             setAvailableCities([])
@@ -100,9 +127,13 @@ const SignupLocation = ({navigation}) => {
         if (!processedCities.length) {
             // If no cities, remove city input and allow submission
             setCanSubmit(true)
+            setCityEditable(false)
+            setCityVisible(false)
         } else {
             // Set available cities and show city input
             setAvailableCities(processedCities)
+            setCityEditable(true)
+            setCityVisible(true)
         }
     }
 
@@ -118,7 +149,10 @@ const SignupLocation = ({navigation}) => {
     useEffect(() => {
         // If valid, this will navigate to the home page, and remove this view as valid
         // is checked in the main component to navigate between authentication & application screen stack
+
+        // Invalid handling, return to signup page
         if (isMounted.current && !isLoading && !valid) {
+            Keyboard.dismiss()
             navigation.reset({
                 index: 0,
                 routes: [{name: 'signup-metadata'}]
@@ -130,15 +164,15 @@ const SignupLocation = ({navigation}) => {
 
     return (
         <View style={styles.signup}>
+            <Image style={styles.logo} source={require('../assets/icon.png')} />
             <View
-                style={{
-                    width: '50%',
-                    height: '5%',
-                    top: -200,
-                    marginBottom: 50,
-                    zIndex: 3,
-                    elevation: 3
-                }}
+                style={[
+                    styles.inputContainer,
+                    {
+                        height:
+                            48 + (isStateVisible && 48) + (isCityVisible && 48)
+                    }
+                ]} // Grant 48 DPs of height for each visible button
             >
                 <SearchableInputDropdown
                     editable={true}
@@ -147,60 +181,82 @@ const SignupLocation = ({navigation}) => {
                     placeholder="Country"
                     input={countryInput}
                     setInput={setCountryInput}
-                />
-            </View>
-            {availableStates.length > 0 && (
-                <View
                     style={{
-                        width: '50%',
-                        height: '5%',
-                        top: -200,
-                        marginBottom: 50,
-                        zIndex: 2,
-                        elevation: 2
+                        ...dropdownStyles,
+                        dropdown: [
+                            dropdownStyles.dropdown,
+                            isStateVisible && styles.inputDivide
+                        ], // Add divider to dropdown
+                        wrapper: [
+                            dropdownStyles.wrapper,
+                            {zIndex: 3, elevation: 3}
+                        ]
                     }}
-                >
+                />
+                {isStateVisible && (
                     <SearchableInputDropdown
-                        editable={true}
+                        editable={isStateEditable}
                         data={availableStates}
                         onSelect={handleStateSelect}
                         placeholder={'State'}
                         input={stateInput}
                         setInput={setStateInput}
+                        style={{
+                            ...dropdownStyles,
+                            dropdown: [
+                                dropdownStyles.dropdown,
+                                isCityVisible && styles.inputDivide // Add divider to dropdown
+                            ],
+                            list: [
+                                dropdownStyles.list,
+                                {zIndex: 2, elevation: 2}
+                            ]
+                        }}
                     />
-                </View>
-            )}
-            {availableCities.length > 0 && (
-                <View
-                    style={{
-                        width: '50%',
-                        height: '5%',
-                        top: -200,
-                        zIndex: 1,
-                        elevation: 1
-                    }}
-                >
+                )}
+                {isCityVisible && (
                     <SearchableInputDropdown
-                        editable={true}
+                        editable={isCityEditable}
                         data={availableCities}
                         onSelect={handleCitySelect}
                         placeholder="City"
                         input={cityInput}
                         setInput={setCityInput}
+                        style={{
+                            ...dropdownStyles,
+                            list: [
+                                dropdownStyles.list,
+                                {zIndex: 1, elevation: 1}
+                            ]
+                        }}
                     />
-                </View>
-            )}
-            {canSubmit && (
+                )}
+            </View>
+            <View
+                style={[styles.buttonContainer, styles.singleButtonContainer]}
+            >
                 <Pressable
                     onPressIn={() => setHighlighted(true)}
                     onPressOut={() => setHighlighted(false)}
-                    style={[styles.button, isHighlighted && styles.highlighted]}
+                    style={[
+                        styles.button,
+                        isHighlighted && styles.highlighted,
+                        {zIndex: 0, elevated: 0}
+                    ]}
                     android_disableSound={true}
                     onPress={handleSignup}
                 >
-                    <Text>Signup</Text>
+                    <Text
+                        style={[
+                            styles.buttonText,
+                            isHighlighted && styles.highlighted,
+                            {zIndex: 0, elevated: 0}
+                        ]}
+                    >
+                        Signup
+                    </Text>
                 </Pressable>
-            )}
+            </View>
         </View>
     )
 }
@@ -213,8 +269,20 @@ const SignupNames = ({navigation}) => {
     const last_name = useSelector(state => state.user.last_name)
 
     const dispatch = useDispatch()
-    const changeFirstName = name => dispatch(setFirstName(name))
-    const changeLastName = name => dispatch(setLastName(name))
+    const changeFirstName = name => {
+        // Capitalize first letter
+        if (first_name.length === 0)
+            name = name?.toUpperCase() ? name.toUpperCase() : name
+
+        dispatch(setFirstName(name))
+    }
+    const changeLastName = name => {
+        // Capitalize first letter
+        if (last_name.length === 0)
+            name = name?.toUpperCase() ? name.toUpperCase() : name
+
+        dispatch(setLastName(name))
+    }
 
     const handleContinue = () => {
         if (!first_name)
@@ -256,39 +324,55 @@ const SignupNames = ({navigation}) => {
                 })
             )
 
+        Keyboard.dismiss()
         navigation.navigate('signup-location')
     }
 
     return (
         <View style={styles.signup}>
-            <View style={styles.title}>
-                <Text>Gym</Text>
+            <Image style={styles.logo} source={require('../assets/icon.png')} />
+            <View style={[styles.inputContainer, styles.namesInputContainer]}>
+                <TextInput
+                    style={[styles.input, styles.inputDivide]}
+                    autocomplete="name-given"
+                    keyboardType="default"
+                    placeholder="First Name"
+                    onChangeText={changeFirstName}
+                    value={first_name}
+                    autoCapitalize="words"
+                    numberOfLines={1}
+                ></TextInput>
+                <TextInput
+                    style={styles.input}
+                    autocomplete="name-family"
+                    keyboardType="default"
+                    placeholder="Last Name"
+                    onChangeText={changeLastName}
+                    value={last_name}
+                    autoCapitalize="words"
+                    numberOfLines={1}
+                ></TextInput>
             </View>
-            <TextInput
-                style={styles.input}
-                autocomplete="name-given"
-                keyboardType="default"
-                placeholder="First Name"
-                onChangeText={changeFirstName}
-                value={first_name}
-            ></TextInput>
-            <TextInput
-                style={styles.input}
-                autocomplete="name-family"
-                keyboardType="default"
-                placeholder="Last Name"
-                onChangeText={changeLastName}
-                value={last_name}
-            ></TextInput>
-            <Pressable
-                onPressIn={() => setHighlighted(true)}
-                onPressOut={() => setHighlighted(false)}
-                style={[styles.button, isHighlighted && styles.highlighted]}
-                android_disableSound={true}
-                onPress={handleContinue}
+            <View
+                style={[styles.buttonContainer, styles.singleButtonContainer]}
             >
-                <Text>Continue</Text>
-            </Pressable>
+                <Pressable
+                    onPressIn={() => setHighlighted(true)}
+                    onPressOut={() => setHighlighted(false)}
+                    style={[styles.button, isHighlighted && styles.highlighted]}
+                    android_disableSound={true}
+                    onPress={handleContinue}
+                >
+                    <Text
+                        style={[
+                            styles.buttonText,
+                            isHighlighted && styles.highlighted
+                        ]}
+                    >
+                        Continue
+                    </Text>
+                </Pressable>
+            </View>
         </View>
     )
 }
@@ -370,10 +454,12 @@ const SignupMetadata = ({navigation}) => {
                 })
             )
 
+        Keyboard.dismiss()
         navigation.navigate('signup-names')
     }
     const handleLogin = () => {
         resetUserInfo()
+        Keyboard.dismiss()
         navigation.reset({
             index: 0,
             routes: [{name: 'login'}]
@@ -382,93 +468,199 @@ const SignupMetadata = ({navigation}) => {
 
     return (
         <View style={styles.signup}>
-            <View style={styles.title}>
-                <Text>Gym</Text>
+            <Image style={styles.logo} source={require('../assets/icon.png')} />
+            <View
+                style={[styles.inputContainer, styles.metadataInputContainer]}
+            >
+                <TextInput
+                    style={[styles.input, styles.inputDivide]}
+                    title="Email"
+                    autoComplete="email"
+                    keyboardType="email-address"
+                    placeholder="Email Address"
+                    onChangeText={changeEmail}
+                    value={email}
+                    autoCapitalize="none"
+                    numberOfLines={1}
+                ></TextInput>
+                <TextInput
+                    style={[styles.input, styles.inputDivide]}
+                    autoComplete="username"
+                    keyboardType="default"
+                    placeholder="Username"
+                    onChangeText={changeUsername}
+                    value={username}
+                    autoCapitalize="none"
+                    numberOfLines={1}
+                ></TextInput>
+                <TextInput
+                    style={styles.input}
+                    autoComplete="password-new"
+                    keyboardType="default"
+                    placeholder="Password"
+                    onChangeText={changePassword}
+                    value={password}
+                    secureTextEntry={true}
+                    autoCapitalize="none"
+                    numberOfLines={1}
+                ></TextInput>
             </View>
-            <TextInput
-                style={styles.input}
-                title="Email"
-                autoComplete="email"
-                keyboardType="email-address"
-                placeholder="Email Address"
-                onChangeText={changeEmail}
-                value={email}
-            ></TextInput>
-            <TextInput
-                style={styles.input}
-                autoComplete="username"
-                keyboardType="default"
-                placeholder="Username"
-                onChangeText={changeUsername}
-                value={username}
-            ></TextInput>
-            <TextInput
-                style={styles.input}
-                autoComplete="password-new"
-                keyboardType="default"
-                placeholder="Password"
-                onChangeText={changePassword}
-                value={password}
-            ></TextInput>
-            <Pressable
-                onPressIn={() => setContinueHighlighted(true)}
-                onPressOut={() => setContinueHighlighted(false)}
-                style={[
-                    styles.button,
-                    isContinueHighlighted && styles.highlighted
-                ]}
-                android_disableSound={true}
-                onPress={handleContinue}
-            >
-                <Text>Continue</Text>
-            </Pressable>
-            <Text>OR</Text>
-            <Pressable
-                onPressIn={() => setLoginHighlighted(true)}
-                onPressOut={() => setLoginHighlighted(false)}
-                style={[
-                    styles.button,
-                    isLoginHighlighted && styles.highlighted
-                ]}
-                android_disableSound={true}
-                onPress={handleLogin}
-            >
-                <Text>Login</Text>
-            </Pressable>
+            <View style={styles.buttonContainer}>
+                <Pressable
+                    onPressIn={() => setContinueHighlighted(true)}
+                    onPressOut={() => setContinueHighlighted(false)}
+                    style={[
+                        styles.button,
+                        styles.buttonDivide,
+                        isContinueHighlighted && styles.highlighted
+                    ]}
+                    android_disableSound={true}
+                    onPress={handleContinue}
+                >
+                    <Text
+                        style={[
+                            styles.buttonText,
+                            isContinueHighlighted && styles.highlighted
+                        ]}
+                    >
+                        Continue
+                    </Text>
+                </Pressable>
+                <Pressable
+                    onPressIn={() => setLoginHighlighted(true)}
+                    onPressOut={() => setLoginHighlighted(false)}
+                    style={[
+                        styles.button,
+                        isLoginHighlighted && styles.highlighted
+                    ]}
+                    android_disableSound={true}
+                    onPress={handleLogin}
+                >
+                    <Text
+                        style={[
+                            styles.buttonText,
+                            isLoginHighlighted && styles.highlighted
+                        ]}
+                    >
+                        Login
+                    </Text>
+                </Pressable>
+            </View>
         </View>
     )
 }
 
-const styles = new StyleSheet.create({
+const styles = StyleSheet.create({
     signup: {
         width: '100%',
         height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
+        flexDirection: 'center',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        backgroundColor: background
+    },
+    logo: {
+        width: 72,
+        height: 72,
+        marginTop: '50%'
     },
     input: {
-        flex: 1
+        flex: 1,
+        width: '100%',
+        fontSize: 14,
+        paddingLeft: 16,
+        paddingRight: 16,
+        textAlign: 'center',
+        ...(Platform.OS === 'ios' ? {paddingVertical: 10} : {}) // Required on IOS to prevent textInput with numberOfLines={1} from wrapping. Ellipses are not added to the end with this solution
     },
-    text: {
-        width: 256,
-        height: 24
+    inputDivide: {
+        borderColor: black,
+        borderBottomWidth: 2
+    },
+    inputContainer: {
+        width: '60%',
+        marginTop: '10%',
+        marginBottom: '10%',
+        borderColor: black,
+        borderWidth: 2,
+        borderRadius: 7
+    },
+    metadataInputContainer: {
+        height: 144 // 48 dp
+    },
+    namesInputContainer: {
+        height: 96
+    },
+    buttonContainer: {
+        width: '40%',
+        height: 80,
+        marginBottom: 'auto'
+    },
+    singleButtonContainer: {
+        height: 40
+    },
+    buttonDivide: {
+        marginBottom: 4
     },
     button: {
-        width: '50%',
-        height: '5%',
+        flex: 1,
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        color: '#ffffff',
-        backgroundColor: '#ffffff',
+        width: '100%',
+        backgroundColor: black,
+        borderColor: black,
         borderWidth: 2,
-        borderRadius: 10,
-        borderColor: '#000'
+        borderRadius: 8
+    },
+    buttonText: {
+        fontFamily: 'Helvetica',
+        color: white,
+        fontSize: 16
     },
     highlighted: {
-        backgroundColor: '#0091FF'
+        color: black,
+        backgroundColor: white
+    }
+})
+
+const dropdownStyles = StyleSheet.create({
+    wrapper: {
+        flex: 1
+    },
+    dropdown: {
+        ...styles.input,
+        borderWidth: 0,
+        borderColor: '',
+        borderRadius: 0,
+        width: '100%'
+    },
+    list: {
+        width: '100%',
+        height: 144,
+        position: 'absolute',
+        top: 46,
+        right: 0,
+        bottom: 0,
+        left: 0,
+        borderColor: black
+    },
+    listItem: {
+        position: 'absolute',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+        height: 48,
+        backgroundColor: white
+    },
+    listItemHighlighted: {
+        backgroundColor: white,
+        color: black
+    },
+    listItemText: {
+        color: black,
+        textAlign: 'center'
     }
 })
 

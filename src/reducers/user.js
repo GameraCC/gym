@@ -99,8 +99,6 @@ const user = (state = initialState, action) => {
             break
     }
 
-    console.log(state)
-
     return state
 }
 

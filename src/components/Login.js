@@ -1,10 +1,20 @@
-import {StyleSheet, View, Text, TextInput, Pressable} from 'react-native'
+import {
+    Platform,
+    Keyboard,
+    StyleSheet,
+    Image,
+    View,
+    Text,
+    TextInput,
+    Pressable
+} from 'react-native'
 import {useState} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import {login} from '../actions/session'
 import {setUsername, setPassword, resetUser} from '../actions/user'
 import {usernameConstraint, passwordConstraint} from '../lib/constraints'
 import {newAlert} from '../actions/alert'
+import {background, white, black} from './colors'
 
 const Login = ({navigation}) => {
     const [isSignupHighlighted, setSignupHighlighted] = useState(false)
@@ -61,6 +71,7 @@ const Login = ({navigation}) => {
     }
     const handleSignup = () => {
         resetUserInfo()
+        Keyboard.dismiss()
         navigation.reset({
             index: 0,
             routes: [{name: 'signup-metadata'}]
@@ -69,50 +80,72 @@ const Login = ({navigation}) => {
 
     return (
         <View style={styles.login}>
-            <View style={styles.title}>
-                <Text>Gym</Text>
+            <Image style={styles.logo} source={require('../assets/icon.png')} />
+            <View style={styles.inputContainer}>
+                <TextInput
+                    style={[styles.input, styles.inputDivide]}
+                    autoComplete="username"
+                    keyboardType="default"
+                    placeholder="Username"
+                    onChangeText={changeUsername}
+                    value={username}
+                    autoCapitalize="none"
+                    multiline={false}
+                    numberOfLines={1}
+                ></TextInput>
+                <TextInput
+                    style={styles.input}
+                    autoComplete="password"
+                    keyboardType="default"
+                    placeholder="Password"
+                    onChangeText={changePassword}
+                    secureTextEntry={true}
+                    value={password}
+                    autoCapitalize="none"
+                    numberOfLines={1}
+                ></TextInput>
             </View>
-            <TextInput
-                style={styles.input}
-                autoComplete="username"
-                keyboardType="default"
-                placeholder="Username"
-                onChangeText={changeUsername}
-                value={username}
-            ></TextInput>
-            <TextInput
-                style={styles.input}
-                autoComplete="password"
-                keyboardType="default"
-                placeholder="Password"
-                onChangeText={changePassword}
-                value={password}
-            ></TextInput>
-            <Pressable
-                onPressIn={() => setLoginHighlighted(true)}
-                onPressOut={() => setLoginHighlighted(false)}
-                style={[
-                    styles.button,
-                    isLoginHighlighted && styles.highlighted
-                ]}
-                android_disableSound={true}
-                onPress={handleLogin}
-            >
-                <Text>Login</Text>
-            </Pressable>
-            <Text>OR</Text>
-            <Pressable
-                onPressIn={() => setSignupHighlighted(true)}
-                onPressOut={() => setSignupHighlighted(false)}
-                style={[
-                    styles.button,
-                    isSignupHighlighted && styles.highlighted
-                ]}
-                android_disableSound={true}
-                onPress={handleSignup}
-            >
-                <Text>Signup</Text>
-            </Pressable>
+            <View style={styles.buttonContainer}>
+                <Pressable
+                    onPressIn={() => setLoginHighlighted(true)}
+                    onPressOut={() => setLoginHighlighted(false)}
+                    style={[
+                        styles.button,
+                        styles.buttonDivide,
+                        isLoginHighlighted && styles.highlighted
+                    ]}
+                    android_disableSound={true}
+                    onPress={handleLogin}
+                >
+                    <Text
+                        style={[
+                            styles.buttonText,
+                            isLoginHighlighted && styles.highlighted
+                        ]}
+                    >
+                        Login
+                    </Text>
+                </Pressable>
+                <Pressable
+                    onPressIn={() => setSignupHighlighted(true)}
+                    onPressOut={() => setSignupHighlighted(false)}
+                    style={[
+                        styles.button,
+                        isSignupHighlighted && styles.highlighted
+                    ]}
+                    android_disableSound={true}
+                    onPress={handleSignup}
+                >
+                    <Text
+                        style={[
+                            styles.buttonText,
+                            isSignupHighlighted && styles.highlighted
+                        ]}
+                    >
+                        Signup
+                    </Text>
+                </Pressable>
+            </View>
         </View>
     )
 }
@@ -123,25 +156,63 @@ const styles = StyleSheet.create({
         height: '100%',
         flexDirection: 'center',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        backgroundColor: background
+    },
+    logo: {
+        width: 72,
+        height: 72,
+        marginTop: '50%'
     },
     input: {
-        flex: 1
+        flex: 1,
+        width: '100%',
+        fontSize: 14,
+        paddingLeft: 16,
+        paddingRight: 16,
+        textAlign: 'center',
+        ...(Platform.OS === 'ios' ? {paddingVertical: 10} : {}) // Required on IOS to prevent textInput with numberOfLines={1} from wrapping. Ellipses are not added to the end with this solution
+    },
+    inputDivide: {
+        borderColor: black,
+        borderBottomWidth: 2
+    },
+    inputContainer: {
+        width: '60%',
+        height: 96,
+        marginTop: '10%',
+        marginBottom: '10%',
+        borderColor: black,
+        borderWidth: 2,
+        borderRadius: 7
+    },
+    buttonContainer: {
+        width: '40%',
+        height: 80,
+        marginBottom: 'auto'
+    },
+    buttonDivide: {
+        marginBottom: 4
     },
     button: {
-        width: '50%',
-        height: '5%',
+        flex: 1,
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        color: '#ffffff',
-        backgroundColor: '#ffffff',
+        width: '100%',
+        backgroundColor: black,
+        borderColor: black,
         borderWidth: 2,
-        borderRadius: 10,
-        borderColor: '#000'
+        borderRadius: 8
+    },
+    buttonText: {
+        fontFamily: 'Helvetica',
+        color: white,
+        fontSize: 16
     },
     highlighted: {
-        backgroundColor: '#0091FF'
+        color: black,
+        backgroundColor: white
     }
 })
 

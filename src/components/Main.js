@@ -14,7 +14,11 @@ const Main = () => {
     return (
         <NavigationContainer>
             <Stack.Navigator>
-                {isValid ? (
+                <Stack.Screen
+                    name="signup-location"
+                    component={SignupLocation}
+                />
+                {/* {isValid ? (
                     <>
                         <Stack.Screen name="home" component={Home} />
                     </>
@@ -34,7 +38,7 @@ const Main = () => {
                             component={SignupLocation}
                         />
                     </>
-                )}
+                )} */}
             </Stack.Navigator>
         </NavigationContainer>
     )

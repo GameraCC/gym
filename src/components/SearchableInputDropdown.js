@@ -1,6 +1,5 @@
 import {useState, useEffect, useRef} from 'react'
 import {
-    StyleSheet,
     View,
     TextInput,
     VirtualizedList,
@@ -19,8 +18,14 @@ import {
  * @param {Object}
  */
 const Item = props => {
-    const {name, isFirst, isFirstHighlighted, setFirstHighlighted, onSelect} =
-        props
+    const {
+        name,
+        isFirst,
+        isFirstHighlighted,
+        setFirstHighlighted,
+        onSelect,
+        style
+    } = props
 
     let [isHighlighted, setHighlighted] = useState(isFirst)
 
@@ -58,16 +63,24 @@ const Item = props => {
     return (
         <Pressable
             style={[
-                styles.item,
+                style.listItem,
                 (isFirst ? isFirstHighlighted : isHighlighted) &&
-                    styles.highlighted
+                    style.listItemHighlighted
             ]}
             onPress={onPressHandler}
             onPressIn={onPressInHandler}
             onPressOut={onPressOutHandler}
             android_disableSound={true}
         >
-            <Text style={styles.text}>{name}</Text>
+            <Text
+                style={[
+                    style.listItemText,
+                    (isFirst ? isFirstHighlighted : isHighlighted) &&
+                        style.listItemHighlighted
+                ]}
+            >
+                {name}
+            </Text>
         </Pressable>
     )
 }
@@ -83,8 +96,11 @@ const Item = props => {
  *
  * Compares input and option names by standardizing to lowercase
  *
+ * --- Styling ---
  * Ensure the parent container is styled with a correct z-index for the dropdown list
- * to overlap other elements
+ * to overlap other elements &
+ *
+ * Ensure the parent container has a width and height
  *
  * @param {Object} props
  * @param {Array.<{name: string}>} props.data - Displayed names of items
@@ -92,10 +108,19 @@ const Item = props => {
  * @param {boolean} props.editable - Whether or not the text input is editable
  * @param {string} props.placeholder - The placeholder text for the text input
  * @param {string} props.input - The search input stateful variable
- * @param {string} props.setInput - Callback to update stateful input variable
+ * @param {Function} props.setInput - Callback to update stateful input variable
+ * @param {Object} props.style
+ * @param {Object | Array} props.style.wrapper - View wrapping list & styling
+ * @param {Object | Array} props.style.dropdown - Dropdown input styling
+ * @param {Object | Array} props.style.list - Dropdown list styling
+ * @param {Object | Array} props.style.listItem - List item styling
+ * @param {Object | Array} props.style.listItemText - List item styling
+ * @param {Object | Array} props.style.listItemHighlighted - Highlighted item styling
+ *
  */
 const SearchableInputDropdown = props => {
-    const {data, onSelect, editable, placeholder, input, setInput} = props
+    const {data, onSelect, editable, placeholder, input, setInput, style} =
+        props
     const [filteredData, setFilteredData] = useState(data)
     const [isFocused, setIsFocused] = useState(false)
     const [isFirstHighlighted, setFirstHighlighted] = useState(true)
@@ -150,7 +175,7 @@ const SearchableInputDropdown = props => {
     }
 
     return (
-        <View style={styles.wrapper}>
+        <View style={style.wrapper}>
             <TextInput
                 autoCapitalize="none"
                 autoComplete="off"
@@ -160,10 +185,11 @@ const SearchableInputDropdown = props => {
                 placeholder={placeholder}
                 onChangeText={setInput}
                 value={input}
-                style={styles.input}
+                style={style.dropdown}
                 onFocus={onFocusHandler}
                 onBlur={onBlurHandler}
                 onSubmitEditing={onSubmitHandler}
+                numberOfLines={1}
             ></TextInput>
             {filteredData.length && input.length && isFocused ? (
                 <VirtualizedList
@@ -178,11 +204,16 @@ const SearchableInputDropdown = props => {
                             isFirst={data.index === 0}
                             isFirstHighlighted={isFirstHighlighted}
                             setFirstHighlighted={setFirstHighlighted}
+                            style={{
+                                listItem: style.listItem,
+                                listItemText: style.listItemText,
+                                listItemHighlighted: style.listItemHighlighted
+                            }}
                         />
                     )}
                     getItemCount={data => data.length}
                     getItem={(data, index) => ({...data[index], index})}
-                    style={styles.list}
+                    style={[style.list]}
                     bounces={false}
                     bouncesZoom={false}
                     keyboardShouldPersistTaps={'handled'}
@@ -194,37 +225,5 @@ const SearchableInputDropdown = props => {
         </View>
     )
 }
-
-const styles = new StyleSheet.create({
-    wrapper: {
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderWidth: 2,
-        borderRadius: 10,
-        borderColor: '#000',
-        overflow: 'visible',
-        backgroundColor: '#fff'
-    },
-    input: {},
-    list: {
-        position: 'absolute',
-        top: 50,
-        backgroundColor: '#fff',
-        width: '100%',
-        maxHeight: 128
-    },
-    item: {
-        height: 50
-    },
-    text: {
-        textAlign: 'center'
-    },
-    highlighted: {
-        backgroundColor: '#0091FF'
-    }
-})
 
 export default SearchableInputDropdown

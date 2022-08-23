@@ -1,3 +1,5 @@
+import {background} from './src/components/colors'
+
 const config = {
     expo: {
         entryPoint: './src/App.js',
@@ -10,7 +12,7 @@ const config = {
         splash: {
             image: './src/assets/splash.png',
             resizeMode: 'contain',
-            backgroundColor: '#1a1a1a'
+            backgroundColor: background
         },
         updates: {
             fallbackToCacheTimeout: 0
@@ -22,7 +24,7 @@ const config = {
         android: {
             adaptiveIcon: {
                 foregroundImage: './src/assets/icon.png',
-                backgroundColor: '#1a1a1a'
+                backgroundColor: background
             }
         },
         web: {
