@@ -24,7 +24,7 @@ const Main = () => {
                     </>
                 ) : (
                     <>
-                        {/* <Stack.Screen
+                        <Stack.Screen
                             name="login"
                             component={Login}
                             options={{title: 'Login'}}
@@ -38,7 +38,7 @@ const Main = () => {
                             name="signup-names"
                             component={SignupNames}
                             options={{title: 'Signup'}}
-                        /> */}
+                        />
                         <Stack.Screen
                             name="signup-location"
                             component={SignupLocation}
