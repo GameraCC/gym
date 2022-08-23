@@ -14,31 +14,38 @@ const Main = () => {
     return (
         <NavigationContainer>
             <Stack.Navigator>
-                <Stack.Screen
-                    name="signup-location"
-                    component={SignupLocation}
-                />
-                {/* {isValid ? (
+                {isValid ? (
                     <>
-                        <Stack.Screen name="home" component={Home} />
+                        <Stack.Screen
+                            name="home"
+                            component={Home}
+                            options={{title: 'Home'}}
+                        />
                     </>
                 ) : (
                     <>
-                        <Stack.Screen name="login" component={Login} />
+                        <Stack.Screen
+                            name="login"
+                            component={Login}
+                            options={{title: 'Login'}}
+                        />
                         <Stack.Screen
                             name="signup-metadata"
                             component={SignupMetadata}
+                            options={{title: 'Signup'}}
                         />
                         <Stack.Screen
                             name="signup-names"
                             component={SignupNames}
+                            options={{title: 'Signup'}}
                         />
                         <Stack.Screen
                             name="signup-location"
                             component={SignupLocation}
+                            options={{title: 'Signup'}}
                         />
                     </>
-                )} */}
+                )}
             </Stack.Navigator>
         </NavigationContainer>
     )

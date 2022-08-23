@@ -91,6 +91,8 @@ const Item = props => {
  * @param {Object} item - The selected item
  */
 
+const Divider = ({style}) => <View style={style} />
+
 /**
  * Creates a searchable dropdown list
  *
@@ -101,6 +103,10 @@ const Item = props => {
  * to overlap other elements &
  *
  * Ensure the parent container has a width and height
+ * Ensure the list style has a defined maxHeight or height
+ *
+ * Ensure a zIndex is applied to the parent container to overlap other elements not just elements within the parent view
+ * Ensure a zIndex is applied to the wrapper style when overlapping multiple SearchableInputDropdowns
  *
  * @param {Object} props
  * @param {Array.<{name: string}>} props.data - Displayed names of items
@@ -114,6 +120,7 @@ const Item = props => {
  * @param {Object | Array} props.style.dropdown - Dropdown input styling
  * @param {Object | Array} props.style.list - Dropdown list styling
  * @param {Object | Array} props.style.listItem - List item styling
+ * @param {Object | Array} props.style.listItemDivider - Divider view styling
  * @param {Object | Array} props.style.listItemText - List item styling
  * @param {Object | Array} props.style.listItemHighlighted - Highlighted item styling
  *
@@ -197,19 +204,25 @@ const SearchableInputDropdown = props => {
                     data={filteredData}
                     keyExtractor={data => data.name}
                     renderItem={data => (
-                        <Item
-                            key={data.item.name}
-                            onSelect={onSelectWrapper}
-                            name={data.item.name}
-                            isFirst={data.index === 0}
-                            isFirstHighlighted={isFirstHighlighted}
-                            setFirstHighlighted={setFirstHighlighted}
-                            style={{
-                                listItem: style.listItem,
-                                listItemText: style.listItemText,
-                                listItemHighlighted: style.listItemHighlighted
-                            }}
-                        />
+                        <>
+                            <Item
+                                key={data.item.name}
+                                onSelect={onSelectWrapper}
+                                name={data.item.name}
+                                isFirst={data.index === 0}
+                                isFirstHighlighted={isFirstHighlighted}
+                                setFirstHighlighted={setFirstHighlighted}
+                                style={{
+                                    listItem: style.listItem,
+                                    listItemText: style.listItemText,
+                                    listItemHighlighted:
+                                        style.listItemHighlighted
+                                }}
+                            />
+                            {data.index !== filteredData.length - 1 && (
+                                <Divider style={style.listItemDivider} />
+                            )}
+                        </>
                     )}
                     getItemCount={data => data.length}
                     getItem={(data, index) => ({...data[index], index})}

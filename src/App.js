@@ -15,9 +15,7 @@ const store = createStore(rootReducer, applyMiddleware(thunk))
 const App = () => {
     return (
         <Provider store={store}>
-            <KeyboardAvoidingWrapper>
-                <Main />
-            </KeyboardAvoidingWrapper>
+            <Main />
             <Alert />
         </Provider>
     )

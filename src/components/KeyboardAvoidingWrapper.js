@@ -1,5 +1,7 @@
 import {background} from './colors'
 
+import {useState} from 'react'
+
 import {
     Platform,
     StyleSheet,
@@ -10,12 +12,16 @@ import {
 
 const KeyboardAvoidingWrapper = props => {
     const handleOnPress = () => Keyboard.dismiss()
+    const [shouldCauseRerender, setCauseRerender] = useState(false)
+
+    Keyboard.addListener('keyboardWillHide', setCauseRerender)
 
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={styles.wrapper}
             keyboardVerticalOffset={8}
+            causeRerender={shouldCauseRerender}
         >
             <TouchableWithoutFeedback onPress={handleOnPress}>
                 {props.children}

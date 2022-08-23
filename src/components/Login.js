@@ -15,6 +15,7 @@ import {setUsername, setPassword, resetUser} from '../actions/user'
 import {usernameConstraint, passwordConstraint} from '../lib/constraints'
 import {newAlert} from '../actions/alert'
 import {background, white, black} from './colors'
+import KeyboardAvoidingWrapper from './KeyboardAvoidingWrapper'
 
 const Login = ({navigation}) => {
     const [isSignupHighlighted, setSignupHighlighted] = useState(false)
@@ -79,7 +80,7 @@ const Login = ({navigation}) => {
     }
 
     return (
-        <View style={styles.login}>
+        <KeyboardAvoidingWrapper style={styles.login}>
             <Image style={styles.logo} source={require('../assets/icon.png')} />
             <View style={styles.inputContainer}>
                 <TextInput
@@ -146,7 +147,7 @@ const Login = ({navigation}) => {
                     </Text>
                 </Pressable>
             </View>
-        </View>
+        </KeyboardAvoidingWrapper>
     )
 }
 
@@ -162,7 +163,7 @@ const styles = StyleSheet.create({
     logo: {
         width: 72,
         height: 72,
-        marginTop: '50%'
+        marginTop: '40%'
     },
     input: {
         flex: 1,
@@ -187,9 +188,9 @@ const styles = StyleSheet.create({
         borderRadius: 7
     },
     buttonContainer: {
-        width: '40%',
+        width: '42.5%',
         height: 80,
-        marginBottom: 'auto'
+        marginBottom: 256
     },
     buttonDivide: {
         marginBottom: 4
@@ -203,7 +204,7 @@ const styles = StyleSheet.create({
         backgroundColor: black,
         borderColor: black,
         borderWidth: 2,
-        borderRadius: 8
+        borderRadius: 5
     },
     buttonText: {
         fontFamily: 'Helvetica',

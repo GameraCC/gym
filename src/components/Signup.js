@@ -170,7 +170,9 @@ const SignupLocation = ({navigation}) => {
                     styles.inputContainer,
                     {
                         height:
-                            48 + (isStateVisible && 48) + (isCityVisible && 48)
+                            48 + (isStateVisible && 48) + (isCityVisible && 48),
+                        zIndex: 4,
+                        elevation: 4
                     }
                 ]} // Grant 48 DPs of height for each visible button
             >
@@ -178,6 +180,7 @@ const SignupLocation = ({navigation}) => {
                     editable={true}
                     data={countries}
                     onSelect={handleCountrySelect}
+                    // onFilterCount={onCountryFilterCount}
                     placeholder="Country"
                     input={countryInput}
                     setInput={setCountryInput}
@@ -207,8 +210,8 @@ const SignupLocation = ({navigation}) => {
                                 dropdownStyles.dropdown,
                                 isCityVisible && styles.inputDivide // Add divider to dropdown
                             ],
-                            list: [
-                                dropdownStyles.list,
+                            wrapper: [
+                                dropdownStyles.wrapper,
                                 {zIndex: 2, elevation: 2}
                             ]
                         }}
@@ -224,8 +227,8 @@ const SignupLocation = ({navigation}) => {
                         setInput={setCityInput}
                         style={{
                             ...dropdownStyles,
-                            list: [
-                                dropdownStyles.list,
+                            wrapper: [
+                                dropdownStyles.wrapper,
                                 {zIndex: 1, elevation: 1}
                             ]
                         }}
@@ -238,19 +241,14 @@ const SignupLocation = ({navigation}) => {
                 <Pressable
                     onPressIn={() => setHighlighted(true)}
                     onPressOut={() => setHighlighted(false)}
-                    style={[
-                        styles.button,
-                        isHighlighted && styles.highlighted,
-                        {zIndex: 0, elevated: 0}
-                    ]}
+                    style={[styles.button, isHighlighted && styles.highlighted]}
                     android_disableSound={true}
                     onPress={handleSignup}
                 >
                     <Text
                         style={[
                             styles.buttonText,
-                            isHighlighted && styles.highlighted,
-                            {zIndex: 0, elevated: 0}
+                            isHighlighted && styles.highlighted
                         ]}
                     >
                         Signup
@@ -586,15 +584,18 @@ const styles = StyleSheet.create({
         borderRadius: 7
     },
     metadataInputContainer: {
-        height: 144 // 48 dp
+        height: 144 // 48 dp per item
     },
     namesInputContainer: {
         height: 96
     },
+    locationInputContainer: {
+        zIndex: 3
+    },
     buttonContainer: {
-        width: '40%',
+        width: '42.5%',
         height: 80,
-        marginBottom: 'auto'
+        marginBottom: 256
     },
     singleButtonContainer: {
         height: 40
@@ -611,7 +612,7 @@ const styles = StyleSheet.create({
         backgroundColor: black,
         borderColor: black,
         borderWidth: 2,
-        borderRadius: 8
+        borderRadius: 5
     },
     buttonText: {
         fontFamily: 'Helvetica',
@@ -626,41 +627,45 @@ const styles = StyleSheet.create({
 
 const dropdownStyles = StyleSheet.create({
     wrapper: {
-        flex: 1
+        height: 48,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     dropdown: {
         ...styles.input,
-        borderWidth: 0,
-        borderColor: '',
-        borderRadius: 0,
-        width: '100%'
+        textAlign: 'center',
+        width: '100%',
+        height: '100%'
     },
     list: {
-        width: '100%',
-        height: 144,
+        width: '101.5%',
+        maxHeight: 144,
         position: 'absolute',
-        top: 46,
-        right: 0,
-        bottom: 0,
-        left: 0,
-        borderColor: black
+        top: 48,
+        backgroundColor: white,
+        borderColor: black,
+        borderWidth: 1,
+        borderRadius: 4
     },
     listItem: {
-        position: 'absolute',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        height: 50
+    },
+    listItemDivider: {
         width: '100%',
-        height: 48,
-        backgroundColor: white
+        borderBottomColor: black,
+        borderBottomWidth: 1
     },
     listItemHighlighted: {
-        backgroundColor: white,
-        color: black
+        backgroundColor: black,
+        color: white
     },
     listItemText: {
-        color: black,
-        textAlign: 'center'
+        fontSize: 13,
+        color: black
     }
 })
 
