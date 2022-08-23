@@ -31,6 +31,7 @@ import {
     firstNameConstraint,
     lastNameConstraint
 } from '../lib/constraints'
+import KeyboardAvoidingWrapper from './KeyboardAvoidingWrapper'
 
 const countries = locations.map(({name, iso3}) => ({name, iso3}))
 
@@ -163,7 +164,7 @@ const SignupLocation = ({navigation}) => {
     }, [isLoading])
 
     return (
-        <View style={styles.signup}>
+        <KeyboardAvoidingWrapper style={styles.signup}>
             <Image style={styles.logo} source={require('../assets/icon.png')} />
             <View
                 style={[
@@ -255,7 +256,7 @@ const SignupLocation = ({navigation}) => {
                     </Text>
                 </Pressable>
             </View>
-        </View>
+        </KeyboardAvoidingWrapper>
     )
 }
 
@@ -327,7 +328,7 @@ const SignupNames = ({navigation}) => {
     }
 
     return (
-        <View style={styles.signup}>
+        <KeyboardAvoidingWrapper style={styles.signup}>
             <Image style={styles.logo} source={require('../assets/icon.png')} />
             <View style={[styles.inputContainer, styles.namesInputContainer]}>
                 <TextInput
@@ -371,7 +372,7 @@ const SignupNames = ({navigation}) => {
                     </Text>
                 </Pressable>
             </View>
-        </View>
+        </KeyboardAvoidingWrapper>
     )
 }
 
@@ -465,7 +466,7 @@ const SignupMetadata = ({navigation}) => {
     }
 
     return (
-        <View style={styles.signup}>
+        <KeyboardAvoidingWrapper style={styles.signup}>
             <Image style={styles.logo} source={require('../assets/icon.png')} />
             <View
                 style={[styles.inputContainer, styles.metadataInputContainer]}
@@ -544,7 +545,7 @@ const SignupMetadata = ({navigation}) => {
                     </Text>
                 </Pressable>
             </View>
-        </View>
+        </KeyboardAvoidingWrapper>
     )
 }
 

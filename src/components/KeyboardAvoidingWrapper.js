@@ -1,40 +1,16 @@
-import {background} from './colors'
-
-import {useState} from 'react'
-
-import {
-    Platform,
-    StyleSheet,
-    KeyboardAvoidingView,
-    TouchableWithoutFeedback,
-    Keyboard
-} from 'react-native'
+import {Platform, KeyboardAvoidingView} from 'react-native'
 
 const KeyboardAvoidingWrapper = props => {
-    const handleOnPress = () => Keyboard.dismiss()
-    const [shouldCauseRerender, setCauseRerender] = useState(false)
-
-    Keyboard.addListener('keyboardWillHide', setCauseRerender)
-
+    const {children, ...otherProps} = props
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={styles.wrapper}
             keyboardVerticalOffset={8}
-            causeRerender={shouldCauseRerender}
+            {...otherProps}
         >
-            <TouchableWithoutFeedback onPress={handleOnPress}>
-                {props.children}
-            </TouchableWithoutFeedback>
+            {children}
         </KeyboardAvoidingView>
     )
 }
-
-const styles = StyleSheet.create({
-    wrapper: {
-        backgroundColor: background,
-        flex: 1
-    }
-})
 
 export default KeyboardAvoidingWrapper
