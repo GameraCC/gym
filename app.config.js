@@ -32,7 +32,7 @@ const config = {
         },
         extra: {
             HOST: process.env.STAGING.includes('true')
-                ? 'eoqmywmvv0.execute-api.us-east-1.amazonaws.com'
+                ? '22mshiq76j.execute-api.us-east-1.amazonaws.com'
                 : ''
         }
     }
