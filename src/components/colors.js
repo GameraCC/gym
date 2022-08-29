@@ -3,5 +3,6 @@ module.exports = {
     red: '#c94f4f',
     black: '#000',
     background: '#fff',
-    white: '#fff'
+    white: '#fff',
+    gray: '#747474'
 }

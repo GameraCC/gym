@@ -8,7 +8,6 @@
     "ios-mac": "STAGING=true expo start --ios",
     "web-mac": "STAGING=true expo start --web",
     "eject-mac": "STAGING=true expo eject",
-
     "start-win": "set STAGING=true && expo start",
     "android-win": "set STAGING=true && expo start --android",
     "ios-win": "set STAGING=true && expo start --ios",
@@ -16,6 +15,7 @@
     "eject-win": "set STAGING=true && expo eject"
   },
   "dependencies": {
+    "@react-navigation/bottom-tabs": "^6.3.3",
     "@react-navigation/native": "^6.0.11",
     "@react-navigation/native-stack": "^6.7.0",
     "axios": "^0.27.2",
@@ -25,6 +25,8 @@
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-native": "0.68.2",
+    "react-native-gesture-handler": "^2.6.0",
+    "react-native-reanimated": "^2.10.0",
     "react-native-safe-area-context": "4.2.4",
     "react-native-screens": "~3.11.1",
     "react-redux": "^8.0.2",

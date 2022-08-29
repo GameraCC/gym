@@ -1,8 +1,8 @@
 import {SET_SESSION_LOADING, SET_SESSION_TOKEN} from './types'
 import {hydrateUser} from './user'
-import {newAlert} from './alert'
 import axios from 'axios'
 import Constants from 'expo-constants'
+import {handleError} from './shared'
 
 const {HOST} = Constants.manifest.extra
 
@@ -39,63 +39,15 @@ const login =
             .then(response => {
                 // 2xx status code
                 // Get the session token
-                const {session, user} = response.data
+                const {session, user, workouts} = response.data
 
                 // Hydrate user info
-                dispatch(hydrateUser(user))
+                dispatch(hydrateUser({...user, workouts}))
 
                 // Set the session token
                 dispatch(setSessionToken(session))
             })
-            .catch(err => {
-                // Handle various errors for non 2xx status codes
-                if (err.response) {
-                    const data = err.response?.data || null
-
-                    if (
-                        [400, 500].includes(err.response.status) &&
-                        data?.message
-                    )
-                        dispatch(
-                            newAlert({
-                                kind: 'error',
-                                title: 'Login Error',
-                                message: data.message
-                            })
-                        )
-                    else if (err.response.status === 401)
-                        dispatch(
-                            newAlert({
-                                kind: 'error',
-                                title: 'Login Error',
-                                message: 'Invalid username or password'
-                            })
-                        )
-                    else if (err.response.status === 500)
-                        dispatch(
-                            newAlert({
-                                kind: 'error',
-                                title: 'Login Error',
-                                message: 'Internal server error'
-                            })
-                        )
-                    else
-                        dispatch(
-                            newAlert({
-                                kind: 'error',
-                                title: 'Login Error',
-                                message: 'Invalid server error'
-                            })
-                        )
-                } else
-                    dispatch(
-                        newAlert({
-                            kind: 'error',
-                            title: 'Login Error',
-                            message: 'Fatal error logging in'
-                        })
-                    )
-            })
+            .catch(handleError({dispatch, title: 'Login Error'}))
     }
 
 const signup = () => async (dispatch, getState) => {
@@ -139,44 +91,7 @@ const signup = () => async (dispatch, getState) => {
             // Set the session token
             dispatch(setSessionToken(session))
         })
-        .catch(err => {
-            // Handle various errors for non 2xx status codes
-            if (err.response) {
-                const data = err.response?.data || null
-
-                if ([400, 500].includes(err.response.status) && data?.message)
-                    dispatch(
-                        newAlert({
-                            kind: 'error',
-                            title: 'Signup Error',
-                            message: data.message
-                        })
-                    )
-                else if (err.response.status === 500)
-                    dispatch(
-                        newAlert({
-                            kind: 'error',
-                            title: 'Signup Error',
-                            message: 'Internal server error'
-                        })
-                    )
-                else
-                    dispatch(
-                        newAlert({
-                            kind: 'error',
-                            title: 'Signup Error',
-                            message: 'Invalid server error'
-                        })
-                    )
-            } else
-                dispatch(
-                    newAlert({
-                        kind: 'error',
-                        title: 'Signup Error',
-                        message: 'Fatal error logging in'
-                    })
-                )
-        })
+        .catch(handleError({dispatch, title: 'Signup Error'}))
 }
 
 export {login, signup}

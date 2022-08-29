@@ -7,6 +7,9 @@ const {
     SET_LOCATION,
     SET_PROFILE_PICTURE,
     SET_BIO,
+    SET_WORKOUTS,
+    DELETE_WORKOUT,
+    SET_REFRESHING,
     HYDRATE_USER,
     RESET_USER
 } = require('../actions/types')
@@ -27,8 +30,21 @@ const initialState = {
         city: ''
     },
     profile_picture: '',
-    bio: ''
+    bio: '',
+    workouts: [],
+    isRefreshing: false // Whether or not the view is refreshing
 }
+
+/**
+ * Deletes a workout by name
+ *
+ * @param {Array} workouts
+ * @param {string} name
+ *
+ * @returns {Array} Updated workouts with deleted workout removed
+ */
+const deleteWorkout = (workouts, name) =>
+    workouts.filter(({name: deletedName}) => deletedName !== name)
 
 const user = (state = initialState, action) => {
     switch (action.type) {
@@ -80,6 +96,25 @@ const user = (state = initialState, action) => {
                 bio: action.bio
             }
             break
+        case SET_WORKOUTS:
+            state = {
+                ...state,
+                workouts: action.workouts
+            }
+        case DELETE_WORKOUT:
+            const updated_workouts = deleteWorkout(state.workouts, action.name)
+
+            state = {
+                ...state,
+                workouts: updated_workouts
+            }
+            break
+        case SET_REFRESHING:
+            state = {
+                ...state,
+                isRefreshing: action.isRefreshing
+            }
+            break
         case HYDRATE_USER:
             state = {
                 ...state,
@@ -89,7 +124,8 @@ const user = (state = initialState, action) => {
                 last_name: action.last_name,
                 location: action.location,
                 profile_picture: action.profile_picture,
-                bio: action.bio
+                bio: action.bio,
+                workouts: action.workouts
             }
             break
         case RESET_USER:

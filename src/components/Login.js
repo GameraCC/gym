@@ -207,6 +207,7 @@ const styles = StyleSheet.create({
         borderRadius: 5
     },
     buttonText: {
+        fontFamily: 'Helvetica-Bold',
         color: white,
         fontSize: 16
     },

@@ -1,28 +1,49 @@
 import {useSelector} from 'react-redux'
 import {NavigationContainer} from '@react-navigation/native'
 import {createNativeStackNavigator} from '@react-navigation/native-stack'
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
 
 import Home from './Home'
 import Login from './Login'
+import BackButton from './BackButton'
 import {SignupMetadata, SignupNames, SignupLocation} from './Signup'
+import Workouts from './Workouts'
+import {white} from './colors'
 
 const Stack = createNativeStackNavigator()
+const Tab = createBottomTabNavigator()
 
 const Main = () => {
     const isValid = useSelector(state => state.session.valid)
 
     return (
         <NavigationContainer>
-            <Stack.Navigator>
-                {isValid ? (
-                    <>
-                        <Stack.Screen
-                            name="home"
-                            component={Home}
-                            options={{title: 'Home'}}
-                        />
-                    </>
-                ) : (
+            {isValid ? (
+                <Tab.Navigator screenOptions={{headerShown: false}}>
+                    <Tab.Screen
+                        name="home"
+                        component={Home}
+                        title="Home"
+                        options={{title: 'Home'}}
+                    />
+                    <Tab.Screen
+                        name="workouts"
+                        component={Workouts}
+                        options={{title: 'Workouts'}}
+                    />
+                </Tab.Navigator>
+            ) : (
+                <Stack.Navigator
+                    screenOptions={({navigation}) => ({
+                        headerStyle: {
+                            backgroundColor: white
+                        },
+                        headerLeft: ({canGoBack}) =>
+                            canGoBack ? (
+                                <BackButton navigation={navigation} />
+                            ) : null
+                    })}
+                >
                     <>
                         <Stack.Screen
                             name="login"
@@ -45,8 +66,8 @@ const Main = () => {
                             options={{title: 'Signup'}}
                         />
                     </>
-                )}
-            </Stack.Navigator>
+                </Stack.Navigator>
+            )}
         </NavigationContainer>
     )
 }

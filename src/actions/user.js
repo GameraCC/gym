@@ -1,4 +1,4 @@
-const {
+import {
     SET_USERNAME,
     SET_EMAIL,
     SET_PASSWORD,
@@ -7,9 +7,17 @@ const {
     SET_LOCATION,
     SET_PROFILE_PICTURE,
     SET_BIO,
+    SET_REFRESHING,
+    SET_WORKOUTS,
+    DELETE_WORKOUT,
     HYDRATE_USER,
     RESET_USER
-} = require('../actions/types')
+} from '../actions/types'
+import axios from 'axios'
+import Constants from 'expo-constants'
+import {handleError} from './shared'
+
+const {HOST} = Constants.manifest.extra
 
 const setUsername = username => ({
     type: SET_USERNAME,
@@ -57,6 +65,64 @@ const setBio = bio => ({
     bio
 })
 
+const setWorkouts = workouts => ({
+    type: SET_WORKOUTS,
+    workouts
+})
+
+const deleteWorkoutLocal = name => ({
+    type: DELETE_WORKOUT,
+    name
+})
+
+const setRefreshing = isRefreshing => ({
+    type: SET_REFRESHING,
+    isRefreshing
+})
+
+const getAllWorkouts = () => async (dispatch, getState) => {
+    const {
+        session: {token: session}
+    } = getState()
+
+    dispatch(setRefreshing(true))
+
+    axios({
+        url: `https://${HOST}/workouts`,
+        method: 'GET',
+        headers: {
+            'authorization': session
+        }
+    })
+        .then(response => {
+            const {workouts} = response.data
+            dispatch(setWorkouts(workouts))
+            dispatch(setRefreshing(false))
+        })
+        .catch(handleError({dispatch, title: 'Refresh Error'}))
+}
+
+const deleteWorkout = name => async (dispatch, getState) => {
+    const {
+        session: {token: session}
+    } = getState()
+
+    const data = JSON.stringify({
+        name
+    })
+
+    axios({
+        url: `https://${HOST}/workouts/delete`,
+        method: 'POST',
+        headers: {
+            'authorization': session
+        },
+        data
+    })
+        .then(() => dispatch(deleteWorkoutLocal(name)))
+        .catch(handleError({dispatch, title: 'Delete Error'}))
+}
+
 // Hydrates user info with login response metadata
 const hydrateUser = ({
     email,
@@ -65,7 +131,8 @@ const hydrateUser = ({
     last_name,
     location: {city, state, country},
     profile_picture,
-    bio
+    bio,
+    workouts
 }) => ({
     type: HYDRATE_USER,
     email,
@@ -78,7 +145,8 @@ const hydrateUser = ({
         country
     },
     profile_picture,
-    bio
+    bio,
+    workouts
 })
 
 const resetUser = () => ({
@@ -94,6 +162,9 @@ export {
     setLocation,
     setProfilePicture,
     setBio,
+    setWorkouts,
+    deleteWorkout,
     hydrateUser,
-    resetUser
+    resetUser,
+    getAllWorkouts
 }
