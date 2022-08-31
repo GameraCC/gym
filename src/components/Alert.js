@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react'
 import {Keyboard, StyleSheet, View, Pressable, Text} from 'react-native'
 import {useSelector, useDispatch} from 'react-redux'
 import {resetAlert} from '../actions/alert'
-import {black, green, red, white} from './colors'
+import {black, green, red, white} from '@assets/colors'
 
 const ErrorAlert = props => {
     const {title, message} = props
@@ -85,6 +85,7 @@ const styles = StyleSheet.create({
         borderRadius: 12
     },
     title: {
+        fontFamily: 'Helvetica',
         width: '100%',
         marginTop: 24,
         marginBottom: 4,
@@ -96,6 +97,7 @@ const styles = StyleSheet.create({
         color: black
     },
     message: {
+        fontFamily: 'Helvetica',
         width: '100%',
         marginTop: 'auto',
         marginBottom: 'auto',
@@ -115,6 +117,7 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius: 10
     },
     continue: {
+        fontFamily: 'Helvetica-Bold',
         width: '100%',
         textAlign: 'center',
         fontSize: 16,

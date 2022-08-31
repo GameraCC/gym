@@ -1,4 +1,5 @@
 import {View, TouchableOpacity, Image} from 'react-native'
+import Images from '@assets/images'
 
 /**
  * Custom navigation back buttons
@@ -16,10 +17,7 @@ const BackButton = props => {
     return (
         <View style={[style && style.container]}>
             <TouchableOpacity onPress={handleBackButtonPress}>
-                <Image
-                    style={{width: 26, height: 26}}
-                    source={require('../assets/icons/back.png')}
-                />
+                <Image style={{width: 26, height: 26}} source={Images.BACK} />
             </TouchableOpacity>
         </View>
     )

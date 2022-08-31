@@ -1,4 +1,4 @@
-const {
+import {
     SET_USERNAME,
     SET_EMAIL,
     SET_PASSWORD,
@@ -12,7 +12,7 @@ const {
     SET_REFRESHING,
     HYDRATE_USER,
     RESET_USER
-} = require('../actions/types')
+} from '../actions/types'
 
 /**
  * Contains all reducers to modify user data related state

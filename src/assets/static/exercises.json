@@ -1,0 +1,42 @@
+{
+    "SEATED_BARBELL_OVERHEAD_PRESS": {
+        "name": "Seated Barbell Overhead Press",
+        "description": "Test",
+        "categories": {
+            "simple": ["Shoulders", "Upper Back"],
+            "advanced": ["Anterior Deltoids", "Medial Deltoid", "Posterior Deltoid", "Triceps"]
+        }
+    },
+    "SEATED_BARBELL_OVERHEAD_PRESSa": {
+        "name": "Seated Barbell Overhead Pressa",
+        "description": "Test",
+        "categories": {
+            "simple": ["Shoulders", "Upper Back"],
+            "advanced": ["Anterior Deltoids", "Medial Deltoid", "Posterior Deltoid", "Triceps"]
+        }
+    },
+    "SEATED_BARBELL_OVERHEAD_PRESSb": {
+        "name": "Seated Barbell Overhead Pressb",
+        "description": "Test",
+        "categories": {
+            "simple": ["Shoulders", "Upper Back"],
+            "advanced": ["Anterior Deltoids", "Medial Deltoid", "Posterior Deltoid", "Triceps"]
+        }
+    },
+    "SEATED_BARBELL_OVERHEAD_PRESSc": {
+        "name": "Seated Barbell Overhead Pressc",
+        "description": "Test",
+        "categories": {
+            "simple": ["Shoulders", "Upper Back"],
+            "advanced": ["Anterior Deltoids", "Medial Deltoid", "Posterior Deltoid", "Triceps"]
+        }
+    },
+        "SEATED_BARBELL_OVERHEAD_PRESSd": {
+        "name": "Seated Barbell Overhead Pressd",
+        "description": "Test",
+        "categories": {
+            "simple": ["Shoulders", "Upper Back"],
+            "advanced": ["Anterior Deltoids", "Medial Deltoid", "Posterior Deltoid", "Triceps"]
+        }
+    }
+}

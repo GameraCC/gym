@@ -14,8 +14,9 @@ import {login} from '../actions/session'
 import {setUsername, setPassword, resetUser} from '../actions/user'
 import {usernameConstraint, passwordConstraint} from '../lib/constraints'
 import {newAlert} from '../actions/alert'
-import {background, white, black} from './colors'
+import {background, white, black} from '@assets/colors'
 import KeyboardAvoidingWrapper from './KeyboardAvoidingWrapper'
+import Images from '@assets/images'
 
 const Login = ({navigation}) => {
     const [isSignupHighlighted, setSignupHighlighted] = useState(false)
@@ -81,7 +82,7 @@ const Login = ({navigation}) => {
 
     return (
         <KeyboardAvoidingWrapper style={styles.login}>
-            <Image style={styles.logo} source={require('../assets/icon.png')} />
+            <Image style={styles.logo} source={Images.ICON} />
             <View style={styles.inputContainer}>
                 <TextInput
                     style={[styles.input, styles.inputDivide]}
@@ -169,6 +170,7 @@ const styles = StyleSheet.create({
         flex: 1,
         width: '100%',
         fontSize: 14,
+        fontFamily: 'Helvetica',
         paddingLeft: 16,
         paddingRight: 16,
         textAlign: 'center',
@@ -207,7 +209,7 @@ const styles = StyleSheet.create({
         borderRadius: 5
     },
     buttonText: {
-        fontFamily: 'Helvetica-Bold',
+        fontFamily: 'Helvetica',
         color: white,
         fontSize: 16
     },

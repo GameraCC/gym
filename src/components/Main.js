@@ -8,7 +8,7 @@ import Login from './Login'
 import BackButton from './BackButton'
 import {SignupMetadata, SignupNames, SignupLocation} from './Signup'
 import Workouts from './Workouts'
-import {white} from './colors'
+import {white} from '@assets/colors'
 
 const Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()

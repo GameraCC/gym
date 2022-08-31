@@ -22,8 +22,8 @@ import {
 import {signup} from '../actions/session'
 import {newAlert} from '../actions/alert'
 import SearchableInputDropdown from './SearchableInputDropdown'
-import {background, black, white} from './colors'
-import locations from '../assets/countries_states_cities.json'
+import {background, black, white} from '@assets/colors'
+import {COUNTRIES_STATES_CITIES} from '@assets/static'
 import {
     usernameConstraint,
     emailConstraint,
@@ -32,8 +32,9 @@ import {
     lastNameConstraint
 } from '../lib/constraints'
 import KeyboardAvoidingWrapper from './KeyboardAvoidingWrapper'
+import Images from '@assets/images'
 
-const countries = locations.map(({name, iso3}) => ({name, iso3}))
+const countries = COUNTRIES_STATES_CITIES.map(({name, iso3}) => ({name, iso3}))
 
 const SignupLocation = ({navigation}) => {
     // Component did mount check
@@ -175,7 +176,7 @@ const SignupLocation = ({navigation}) => {
 
     return (
         <KeyboardAvoidingWrapper style={styles.signup}>
-            <Image style={styles.logo} source={require('../assets/icon.png')} />
+            <Image style={styles.logo} source={Images.ICON} />
             <View
                 style={[
                     styles.inputContainer,
@@ -329,7 +330,7 @@ const SignupNames = ({navigation}) => {
 
     return (
         <KeyboardAvoidingWrapper style={styles.signup}>
-            <Image style={styles.logo} source={require('../assets/icon.png')} />
+            <Image style={styles.logo} source={Images.ICON} />
             <View style={[styles.inputContainer, styles.namesInputContainer]}>
                 <TextInput
                     style={[styles.input, styles.inputDivide]}
@@ -467,7 +468,7 @@ const SignupMetadata = ({navigation}) => {
 
     return (
         <KeyboardAvoidingWrapper style={styles.signup}>
-            <Image style={styles.logo} source={require('../assets/icon.png')} />
+            <Image style={styles.logo} source={Images.ICON} />
             <View
                 style={[styles.inputContainer, styles.metadataInputContainer]}
             >
@@ -566,6 +567,7 @@ const styles = StyleSheet.create({
     input: {
         flex: 1,
         width: '100%',
+        fontFamily: 'Helvetica',
         fontSize: 14,
         paddingLeft: 16,
         paddingRight: 16,
@@ -616,7 +618,7 @@ const styles = StyleSheet.create({
         borderRadius: 5
     },
     buttonText: {
-        fontFamily: 'Helvetica-Bold',
+        fontFamily: 'Helvetica',
         color: white,
         fontSize: 16
     },
@@ -665,6 +667,7 @@ const dropdownStyles = StyleSheet.create({
         color: white
     },
     listItemText: {
+        fontFamily: 'Helvetica',
         fontSize: 13,
         color: black
     }

@@ -1,7 +1,7 @@
 import {useState, useRef, useEffect} from 'react'
 import {StyleSheet, View, Pressable, Text, TextInput} from 'react-native'
 import BackButton from './BackButton'
-import {white, black, green, gray} from './colors'
+import {white, black, green, gray} from '@assets/colors'
 
 /**
  * Header component

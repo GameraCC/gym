@@ -18,3 +18,5 @@ export const RESET_USER = 'RESET_USER'
 
 export const NEW_ALERT = 'NEW_ALERT'
 export const RESET_ALERT = 'RESET_ALERT'
+
+export const ADD_EXERCISE = 'ADD_EXERCISE'
