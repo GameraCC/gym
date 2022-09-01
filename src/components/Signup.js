@@ -567,7 +567,6 @@ const styles = StyleSheet.create({
     input: {
         flex: 1,
         width: '100%',
-        fontFamily: 'Helvetica',
         fontSize: 14,
         paddingLeft: 16,
         paddingRight: 16,

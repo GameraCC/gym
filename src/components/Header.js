@@ -170,10 +170,9 @@ const EditableHeader = params => {
 const styles = StyleSheet.create({
     backButtonContainer: {
         position: 'relative',
-        right: 24
+        right: 14
     },
     headerContainer: {
-        backgroundColor: white,
         marginLeft: 32,
         marginRight: 32,
         marginTop: 64,

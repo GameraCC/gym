@@ -17,7 +17,10 @@ const BackButton = props => {
     return (
         <View style={[style && style.container]}>
             <TouchableOpacity onPress={handleBackButtonPress}>
-                <Image style={{width: 26, height: 26}} source={Images.BACK} />
+                <Image
+                    style={{width: 24, height: 24, resizeMode: 'contain'}}
+                    source={Images.BACK}
+                />
             </TouchableOpacity>
         </View>
     )

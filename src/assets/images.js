@@ -6,6 +6,10 @@ export default {
     FORWARD_WHITE: require('./images/icons/forward-white.png'),
     DELETE_HIGHLIGHTED: require('./images/icons/delete-highlighted.png'),
     DELETE: require('./images/icons/delete.png'),
+    SEARCH: require('./images/icons/search.png'),
+    HOME: require('./images/icons/home.png'),
+    HOME_HIGHLIGHTED: require('./images/icons/home-highlighted.png'),
+
     SEATED_BARBELL_OVERHEAD_PRESS: require('./images/exercises/SEATED_BARBELL_OVERHEAD_PRESS.gif'),
     SEATED_BARBELL_OVERHEAD_PRESSa: require('./images/exercises/SEATED_BARBELL_OVERHEAD_PRESS.gif'),
     SEATED_BARBELL_OVERHEAD_PRESSb: require('./images/exercises/SEATED_BARBELL_OVERHEAD_PRESS.gif'),

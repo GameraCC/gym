@@ -3,6 +3,7 @@ import {newAlert} from './alert'
 export const handleError =
     ({dispatch, title}) =>
     err => {
+        console.log(err)
         // Handle various errors for non 2xx status codes
         if (err.response) {
             const data = err.response?.data || null
@@ -23,7 +24,15 @@ export const handleError =
                         message: 'Internal server error'
                     })
                 )
-            else
+            else if (err.response.status === 401) {
+                dispatch(
+                    newAlert({
+                        kind: 'error',
+                        title,
+                        message: 'Invalid credentials'
+                    })
+                )
+            } else
                 dispatch(
                     newAlert({
                         kind: 'error',

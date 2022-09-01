@@ -1,5 +1,6 @@
-import {useState, useCallback, useRef, useMemo, useEffect} from 'react'
+import React, {useState, useCallback, useRef, useMemo, useEffect} from 'react'
 import {
+    Keyboard,
     Platform,
     RefreshControl,
     TouchableOpacity,
@@ -14,15 +15,24 @@ import {
 } from 'react-native'
 import Constants from 'expo-constants'
 import {useSelector, useDispatch} from 'react-redux'
+import {useNavigation} from '@react-navigation/native'
 import {createNativeStackNavigator} from '@react-navigation/native-stack'
 import {black, gray, green, white} from '@assets/colors'
 import {deleteWorkout, getAllWorkouts} from '../actions/user'
 import {Header, EditableHeader} from './Header'
-import Animated, {FadeInUp, FadeOutLeft} from 'react-native-reanimated'
+import Animated, {
+    FadeInUp,
+    FadeOutLeft,
+    useAnimatedStyle,
+    interpolate,
+    interpolateColor,
+    Extrapolate
+} from 'react-native-reanimated'
 import BottomSheet, {useBottomSheet} from '@gorhom/bottom-sheet'
 import Images from '@assets/images'
 import {EXERCISES} from '@assets/static'
 import {light_black, light_white} from '../assets/colors'
+import BackButton from './BackButton'
 
 const Stack = createNativeStackNavigator()
 const BottomSheetStack = new createNativeStackNavigator()
@@ -165,7 +175,7 @@ const Workout = props => {
 }
 
 const ListedWorkoutHeader = props => {
-    const {navigation} = props
+    const navigation = useNavigation()
 
     const buttonStyle = {
         backgroundColor: green,
@@ -199,8 +209,6 @@ const ListedWorkoutHeader = props => {
 }
 
 const ListedWorkouts = props => {
-    const {navigation} = props
-
     const dispatch = useDispatch()
     const workouts = useSelector(state => state.user.workouts)
     const isRefreshing = useSelector(state => state.user.isRefreshing)
@@ -225,7 +233,7 @@ const ListedWorkouts = props => {
                     />
                 }
             >
-                <ListedWorkoutHeader navigation={navigation} />
+                <ListedWorkoutHeader />
                 {workouts.length ? (
                     workouts.map(({name, iat}) => (
                         <Workout
@@ -246,10 +254,12 @@ const ListedWorkouts = props => {
 }
 
 const CreateWorkoutHeader = props => {
-    const {navigation, onSave} = props
+    const {onSave} = props
 
     const [title, setTitle] = useState('Add a title')
     const [description, setDescription] = useState('Add a description')
+
+    const navigation = useNavigation()
 
     const buttonStyle = {
         backgroundColor: green,
@@ -284,11 +294,40 @@ const CreateWorkoutHeader = props => {
     )
 }
 
+const ExerciseBottomSheetHeader = props => {
+    const navigation = useNavigation()
+
+    return (
+        <View style={styles.bottomSheetHeader}>
+            <BackButton
+                style={{container: styles.bottomSheetHeaderBackButton}}
+                navigation={navigation}
+            />
+            <Text style={styles.bottomSheetHeaderTitle}>Exercise Info</Text>
+        </View>
+    )
+}
+
 const ExerciseBottomSheetInfo = props => {
-    const {name} = props
+    const {
+        route: {
+            params: {categories, description, id, name}
+        }
+    } = props
 
     // Display info sheet
-    return <View>{name}</View>
+    return (
+        <ScrollView
+            bounces={false}
+            stickyHeaderIndices={[0]}
+            style={styles.container}
+        >
+            <ExerciseBottomSheetHeader />
+            <View style={styles.exerciseBottomSheetInfo}>
+                <Text>{name}</Text>
+            </View>
+        </ScrollView>
+    )
 }
 
 const ExerciseBottomSheetSection = props => {
@@ -325,20 +364,21 @@ const ExerciseBottomSheetItemContainer = props => {
 }
 
 const ExerciseBottomSheetItem = props => {
-    const {id, categories, name, description, firstItem, lastItem} = props
+    const {
+        id,
+        categories,
+        name,
+        description,
+        handleItemClick,
+        firstItem,
+        lastItem
+    } = props
     const [highlighted, setHighlighted] = useState(false)
 
     const handlePressIn = () => setHighlighted(true)
     const handlePressOut = () => setHighlighted(false)
-    const handlePress = () => {
-        // navigate to info screen with id, categories, name & description
-        const props = {
-            id,
-            categories,
-            name,
-            description
-        }
-    }
+    const handlePress = () =>
+        handleItemClick({id, categories, name, description})
 
     return (
         <View
@@ -383,14 +423,14 @@ const ExerciseBottomSheetItem = props => {
     )
 }
 
-const ExerciseBottomSheetList = () => {
+const ExerciseBottomSheetList = props => {
     const [input, setInput] = useState('')
-
-    const {expand} = useBottomSheet()
-
     const [filteredExercises, setFilteredExercises] = useState(
         EXERCISE_SECTIONED_DATA
     )
+
+    const navigation = useNavigation()
+    const {expand} = useBottomSheet()
 
     useEffect(() => {
         const filtered = EXERCISE_SECTIONED_DATA.reduce((acc, section) => {
@@ -408,21 +448,45 @@ const ExerciseBottomSheetList = () => {
 
     const handleKeyboardFocus = () => expand()
 
+    const handleItemClick = useCallback(
+        ({id, categories, name, description}) => {
+            // Dismiss keyboard if present
+            Keyboard.dismiss()
+
+            // Navigate to info screen with id, categories, name & description
+            const props = {
+                id,
+                categories,
+                name,
+                description
+            }
+
+            navigation.navigate('exercise-info', props)
+        },
+        []
+    )
+
     const Seperator = () => <View style={styles.exerciseBottomSheetSeperator} />
 
     return (
         <View style={styles.bottomSheetContainer}>
-            <TextInput
-                style={styles.exerciseBottomSheetSearch}
-                keyboardType="default"
-                placeholder="Search for an exercise"
-                onChangeText={setInput}
-                value={input}
-                autoCapitalize="none"
-                multiline={false}
-                numberOfLines={1}
-                onFocus={handleKeyboardFocus}
-            ></TextInput>
+            <View style={styles.exerciseBottomSheetSearchContainer}>
+                <Image
+                    style={styles.exerciseBottomSheetSearchIcon}
+                    source={Images.SEARCH}
+                />
+                <TextInput
+                    style={styles.exerciseBottomSheetSearch}
+                    keyboardType="default"
+                    placeholder="Search Exercises"
+                    onChangeText={setInput}
+                    value={input}
+                    autoCapitalize="none"
+                    multiline={false}
+                    numberOfLines={1}
+                    onFocus={handleKeyboardFocus}
+                ></TextInput>
+            </View>
             <Seperator />
             <SectionList
                 style={styles.exerciseBottomSheetList}
@@ -448,6 +512,7 @@ const ExerciseBottomSheetList = () => {
                             categories={categories}
                             firstItem={firstItem}
                             lastItem={lastItem}
+                            handleItemClick={handleItemClick}
                         />
                     )
                 }}
@@ -456,20 +521,100 @@ const ExerciseBottomSheetList = () => {
                 }}
                 CellRendererComponent={ExerciseBottomSheetItemContainer} // Wrap item with this component
                 stickySectionHeadersEnabled={false}
+                keyboardDismissMode="on-drag"
+                keyboardShouldPersistTaps="always"
             ></SectionList>
         </View>
+    )
+}
+
+// The backdrop, which is everything except the bottomsheet, must be passed to the bottomsheet as the backdropComponent prop
+const ExerciseBottomSheetBackdropComponent = props => {
+    const {animatedIndex} = props
+    const [selectedExercises, setSelectedExercises] = useState([])
+    const isAddExerciseRendered = useRef(false)
+
+    // Name of exercise to be added, stored in global redux to avoid passing callbacks between components & wrapping screens in contexts
+    const exerciseName = useSelector(state => state.updates.exercise.name)
+
+    const bottomSheetRef = useBottomSheet()
+    const navigation = useNavigation()
+
+    const onSave = useCallback(({title, description}) => {
+        // validate constraints on inputs
+        // send on save request
+        console.log('saved')
+    }, [])
+
+    // Add a new exercise
+    useEffect(() => {
+        // Don't run on first mount
+        if (!isAddExerciseRendered.current) isAddExerciseRendered.current = true
+        else {
+            // exerciseName
+            setSelectedExercises('')
+        }
+    }, [exerciseName])
+
+    const opacity = useAnimatedStyle(() => {
+        const style = {
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            width: animatedIndex.value === 0 ? 0 : '100%',
+            height: animatedIndex.value === 0 ? 0 : '100%',
+            backgroundColor: interpolateColor(
+                animatedIndex.value,
+                [0, 2],
+                [white, black]
+            ),
+            opacity: interpolate(
+                animatedIndex.value,
+                [0, 1, 2],
+                [0, 0.5, 0.6],
+                Extrapolate.CLAMP
+            )
+        }
+
+        return style
+    })
+
+    const handleOpacityPress = () => bottomSheetRef.collapse()
+
+    return (
+        <>
+            <View style={styles.statusBarSafeView} />
+            <ScrollView
+                contentContainerStyle={{flexGrow: 1}}
+                style={styles.container}
+            >
+                <CreateWorkoutHeader navigation={navigation} onSave={onSave} />
+                <View style={styles.noneContainer}>
+                    <Text style={styles.noneText}>No Exercises</Text>
+                </View>
+            </ScrollView>
+            <Animated.View style={opacity}>
+                <Pressable
+                    style={{
+                        width: '100%',
+                        height: '100%'
+                    }}
+                    onPress={handleOpacityPress}
+                />
+            </Animated.View>
+        </>
     )
 }
 
 const ExerciseBottomSheet = props => {
     const {backdropComponent} = props
 
-    const bottomSheetRef = useRef(null)
     const snapPoints = useMemo(() => ['10%', '35%', '65%'], [])
 
     return (
         <BottomSheet
-            ref={bottomSheetRef}
             index={0}
             snapPoints={snapPoints}
             backdropComponent={backdropComponent}
@@ -489,6 +634,7 @@ const ExerciseBottomSheet = props => {
                     name="exercise-info"
                     component={ExerciseBottomSheetInfo}
                     title="Exercise Info"
+                    options={{headerShown: false}}
                 ></BottomSheetStack.Screen>
             </BottomSheetStack.Navigator>
         </BottomSheet>
@@ -496,54 +642,14 @@ const ExerciseBottomSheet = props => {
 }
 
 const CreateWorkout = props => {
-    const {navigation} = props
-
-    const [selectedExercises, setSelectedExercises] = useState([])
-
-    // Name of exercise to be added, stored in global redux to avoid passing callbacks between components & wrapping screens in contexts
-    const exerciseName = useSelector(state => state.updates.exercise.name)
-    const isAddExerciseRendered = useRef(false)
-
-    const onSave = useCallback(({title, description}) => {
-        // validate constraints on inputs
-        // send on save request
-        console.log('saved')
-    }, [])
-
-    // Add a new exercise
-    useEffect(() => {
-        // Don't run on first mount
-        if (!isAddExerciseRendered.current) isAddExerciseRendered.current = true
-        else {
-            // exerciseName
-            setSelectedExercises('')
-        }
-    }, [exerciseName])
-
-    // The backdrop, which is everything except the bottomsheet, must be passed to the bottomsheet as the backdropComponent prop
-    const BackdropComponent = () => (
-        <View>
-            <ScrollView
-                contentContainerStyle={{flexGrow: 1}}
-                style={styles.container}
-            >
-                <CreateWorkoutHeader navigation={navigation} onSave={onSave} />
-                <View style={styles.noneContainer}>
-                    <Text style={styles.noneText}>No Exercises</Text>
-                </View>
-            </ScrollView>
-        </View>
-    )
-
     return (
-        <>
-            <View style={styles.statusBarSafeView} />
-            <ExerciseBottomSheet backdropComponent={BackdropComponent} />
-        </>
+        <ExerciseBottomSheet
+            backdropComponent={ExerciseBottomSheetBackdropComponent}
+        />
     )
 }
 
-const Workouts = () => {
+const Workouts = props => {
     return (
         <Stack.Navigator
             screenOptions={{
@@ -626,25 +732,38 @@ const styles = StyleSheet.create({
         fontFamily: 'Helvetica',
         fontSize: 20
     },
+    backdropContainer: {
+        backgroundColor: black
+    },
     bottomSheetContainer: {
         width: '100%',
         height: '100%',
         backgroundColor: white
     },
-    exerciseBottomSheetSearch: {
-        fontFamily: 'Helvetica',
-        height: 36,
-        marginTop: 4,
-        marginRight: 8,
-        marginLeft: 8,
+    exerciseBottomSheetSearchContainer: {
+        overflow: 'hidden',
+        marginLeft: 16,
+        marginRight: 16,
         marginBottom: 24,
-        textAlign: 'left',
-        paddingLeft: 16,
-
-        borderRadius: 4,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        borderRadius: 8,
         borderColor: black,
-        borderWidth: 1,
-
+        borderWidth: 0.75,
+        backgroundColor: light_white
+    },
+    exerciseBottomSheetSearchIcon: {
+        marginLeft: 8,
+        marginRight: 8,
+        width: 24,
+        height: '50%',
+        resizeMode: 'contain'
+    },
+    exerciseBottomSheetSearch: {
+        flex: 1,
+        marginRight: 16,
         ...(Platform.OS === 'ios' ? {paddingVertical: 10} : {}) // Required on IOS to prevent textInput with numberOfLines={1} from wrapping. Ellipses are not added to the end with this solution
     },
     exerciseBottomSheetSeperator: {
@@ -724,12 +843,36 @@ const styles = StyleSheet.create({
         marginLeft: 'auto',
         marginRight: 16,
         width: 20,
-        height: 20
+        height: 20,
+        resizeMode: 'contain'
     },
     exerciseBottomSheetItemHighlighted: {
         backgroundColor: light_black,
         color: light_white
-    }
+    },
+    bottomSheetHeader: {
+        width: '100%',
+        height: 48,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 16,
+        backgroundColor: 'white'
+    },
+    bottomSheetHeaderTitle: {
+        fontFamily: 'Helvetica-Bold',
+        fontSize: 16
+    },
+    bottomSheetHeaderBackButton: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100%',
+        position: 'absolute',
+        left: 20
+    },
+    exerciseBottomSheetInfo: {}
 })
 
 export default Workouts

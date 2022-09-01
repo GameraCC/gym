@@ -1,3 +1,4 @@
+import {View, StyleSheet, Pressable, Image} from 'react-native'
 import {useSelector} from 'react-redux'
 import {NavigationContainer} from '@react-navigation/native'
 import {createNativeStackNavigator} from '@react-navigation/native-stack'
@@ -9,27 +10,99 @@ import BackButton from './BackButton'
 import {SignupMetadata, SignupNames, SignupLocation} from './Signup'
 import Workouts from './Workouts'
 import {white} from '@assets/colors'
+import Images from '@assets/images'
+import {gray} from '../assets/colors'
 
 const Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
 
-const Main = () => {
+const TabItem = props => {
+    const {onPress, onLongPress, isFocused, image, imageHighlighted} = props
+
+    console.log(isFocused)
+
+    return (
+        <Pressable
+            style={styles.tabBarItemContainer}
+            onLongPress={onLongPress}
+            onPress={onPress}
+        >
+            <Image
+                style={styles.tabBarItemImage}
+                source={isFocused ? imageHighlighted : image}
+            ></Image>
+        </Pressable>
+    )
+}
+
+const TabBar = props => {
+    const {state, descriptors, navigation} = props
+
+    const onPress = ({key, name, isFocused}) => {
+        const event = navigation.emit({
+            type: 'tabPress',
+            target: key,
+            canPreventDefault: true
+        })
+
+        if (!isFocused && !event.defaultPrevented) {
+            navigation.navigate({name: name, merge: true})
+        }
+    }
+
+    const onLongPress = ({key}) =>
+        navigation.emit({
+            type: 'tabLongPress',
+            target: key
+        })
+
+    return (
+        <View style={styles.tabBarContainer}>
+            {state.routes.map((route, index) => {
+                const {options} = descriptors[route.key]
+                const isFocused = state.index === index
+
+                return (
+                    <TabItem
+                        key={route.key}
+                        isFocused={isFocused}
+                        onLongPress={() => onLongPress(route)}
+                        onPress={() => onPress({...route, isFocused})}
+                        image={options.image}
+                        imageHighlighted={options.imageHighlighted}
+                    />
+                )
+            })}
+        </View>
+    )
+}
+
+const Main = props => {
     const isValid = useSelector(state => state.session.valid)
 
     return (
         <NavigationContainer>
             {isValid ? (
-                <Tab.Navigator screenOptions={{headerShown: false}}>
+                <Tab.Navigator
+                    screenOptions={{headerShown: false}}
+                    tabBar={props => <TabBar {...props} />}
+                >
                     <Tab.Screen
                         name="home"
                         component={Home}
                         title="Home"
-                        options={{title: 'Home'}}
+                        options={{
+                            image: Images.HOME,
+                            imageHighlighted: Images.HOME_HIGHLIGHTED
+                        }}
                     />
                     <Tab.Screen
                         name="workouts"
                         component={Workouts}
-                        options={{title: 'Workouts'}}
+                        options={{
+                            image: Images.HOME,
+                            imageHighlighted: Images.HOME_HIGHLIGHTED
+                        }}
                     />
                 </Tab.Navigator>
             ) : (
@@ -71,5 +144,32 @@ const Main = () => {
         </NavigationContainer>
     )
 }
+
+const styles = StyleSheet.create({
+    tabBarContainer: {
+        width: '100%',
+        paddingBottom: 20,
+        paddingTop: 4,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
+
+        borderTopColor: gray,
+        borderTopWidth: 1
+    },
+    tabBarItemContainer: {
+        width: 64,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 48
+    },
+    tabBarItemImage: {
+        width: 28,
+        height: 28,
+        resizeMode: 'contain'
+    }
+})
 
 export default Main

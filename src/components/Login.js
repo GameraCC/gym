@@ -170,7 +170,6 @@ const styles = StyleSheet.create({
         flex: 1,
         width: '100%',
         fontSize: 14,
-        fontFamily: 'Helvetica',
         paddingLeft: 16,
         paddingRight: 16,
         textAlign: 'center',
