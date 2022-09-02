@@ -1,3 +1,6 @@
+/**
+ * Comment out functional / dynamic parts of config when installing packages using expo
+ */
 const config = {
     expo: {
         entryPoint: './src/App.js',
