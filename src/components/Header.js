@@ -132,6 +132,8 @@ const EditableHeader = params => {
                     onChangeText={titleInputCallback}
                     autoFocus={true}
                     placeholder={placeholderTitle.current}
+                    keyboardDismissMode="on-drag"
+                    keyboardShouldPersistTaps="always"
                 />
                 <TextInput
                     numberOfLines={1}
@@ -139,6 +141,8 @@ const EditableHeader = params => {
                     value={description}
                     onChangeText={descriptionInputCallback}
                     placeholder={placeholderDescription.current}
+                    keyboardDismissMode="on-drag"
+                    keyboardShouldPersistTaps="always"
                 />
             </View>
             <View style={[styles.buttonContainer]}>
