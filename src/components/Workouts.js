@@ -15,7 +15,7 @@ import {
 } from 'react-native'
 import Constants from 'expo-constants'
 import {useSelector, useDispatch} from 'react-redux'
-import {useNavigation} from '@react-navigation/native'
+import {NavigationContainer, useNavigation} from '@react-navigation/native'
 import {createNativeStackNavigator} from '@react-navigation/native-stack'
 import {black, gray, green, white} from '@assets/colors'
 import {deleteWorkout, getAllWorkouts} from '../actions/user'
@@ -33,6 +33,7 @@ import Images from '@assets/images'
 import {EXERCISES} from '@assets/static'
 import {light_black, light_white} from '../assets/colors'
 import BackButton from './BackButton'
+import * as Haptics from 'expo-haptics'
 
 const Stack = createNativeStackNavigator()
 const BottomSheetStack = new createNativeStackNavigator()
@@ -113,7 +114,10 @@ const Workout = props => {
     const handleDeletePressIn = () => setDeleteHighlighted(true)
     const handleDeletePressOut = () => setDeleteHighlighted(false)
 
-    const handleDeletePress = () => dispatch(deleteWorkout(name))
+    const handleDeletePress = () => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+        dispatch(deleteWorkout(name))
+    }
 
     return (
         <Animated.View
@@ -530,8 +534,9 @@ const ExerciseBottomSheetList = props => {
 
 // The backdrop, which is everything except the bottomsheet, must be passed to the bottomsheet as the backdropComponent prop
 const ExerciseBottomSheetBackdropComponent = props => {
-    const {animatedIndex} = props
+    const {animatedIndex, routeName} = props
     const [selectedExercises, setSelectedExercises] = useState([])
+
     const isAddExerciseRendered = useRef(false)
 
     // Name of exercise to be added, stored in global redux to avoid passing callbacks between components & wrapping screens in contexts
@@ -589,6 +594,8 @@ const ExerciseBottomSheetBackdropComponent = props => {
             <ScrollView
                 contentContainerStyle={{flexGrow: 1}}
                 style={styles.container}
+                keyboardDismissMode="on-drag"
+                keyboardShouldPersistTaps="always"
             >
                 <CreateWorkoutHeader navigation={navigation} onSave={onSave} />
                 <View style={styles.noneContainer}>
@@ -611,32 +618,55 @@ const ExerciseBottomSheetBackdropComponent = props => {
 const ExerciseBottomSheet = props => {
     const {backdropComponent} = props
 
+    const routeName = useRef(null)
+    const navigationRef = useRef(null)
+
     const snapPoints = useMemo(() => ['10%', '35%', '65%'], [])
+
+    // Reset navigation on bottomsheet back to exercise list if not already on exercise list upon collapse
+    const onChangeIndex = useCallback(index => {
+        if (index === 0 && routeName.current !== 'exercise-list') {
+            navigationRef.current.reset({
+                index: 0,
+                routes: [{name: 'exercise-list'}]
+            })
+        }
+    })
 
     return (
         <BottomSheet
             index={0}
             snapPoints={snapPoints}
             backdropComponent={backdropComponent}
+            onChange={onChangeIndex}
         >
-            <BottomSheetStack.Navigator
-                screenOptions={{
-                    title: 'Add Exercise'
-                }}
+            <NavigationContainer
+                independent={true}
+                onStateChange={state =>
+                    (routeName.current =
+                        state.routes[state.routes.length - 1].name)
+                }
+                ref={navigationRef}
             >
-                <BottomSheetStack.Screen
-                    name="exercise-list"
-                    component={ExerciseBottomSheetList}
-                    title="Exercises"
-                    options={{headerShown: false}}
-                />
-                <BottomSheetStack.Screen
-                    name="exercise-info"
-                    component={ExerciseBottomSheetInfo}
-                    title="Exercise Info"
-                    options={{headerShown: false}}
-                ></BottomSheetStack.Screen>
-            </BottomSheetStack.Navigator>
+                <BottomSheetStack.Navigator
+                    screenOptions={{
+                        title: 'Add Exercise'
+                    }}
+                >
+                    <BottomSheetStack.Screen
+                        name="exercise-list"
+                        component={ExerciseBottomSheetList}
+                        title="Exercises"
+                        options={{headerShown: false}}
+                    />
+                    <BottomSheetStack.Screen
+                        name="exercise-info"
+                        component={ExerciseBottomSheetInfo}
+                        title="Exercise Info"
+                        options={{headerShown: false}}
+                    ></BottomSheetStack.Screen>
+                </BottomSheetStack.Navigator>
+            </NavigationContainer>
         </BottomSheet>
     )
 }
