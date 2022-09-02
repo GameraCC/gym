@@ -1,8 +1,15 @@
-import {View, StyleSheet, Pressable, Image} from 'react-native'
+import {
+    View,
+    StyleSheet,
+    Pressable,
+    Image,
+    TouchableOpacity
+} from 'react-native'
 import {useSelector} from 'react-redux'
 import {NavigationContainer} from '@react-navigation/native'
 import {createNativeStackNavigator} from '@react-navigation/native-stack'
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
+import * as Haptics from 'expo-haptics'
 
 import Home from './Home'
 import Login from './Login'
@@ -19,10 +26,8 @@ const Tab = createBottomTabNavigator()
 const TabItem = props => {
     const {onPress, onLongPress, isFocused, image, imageHighlighted} = props
 
-    console.log(isFocused)
-
     return (
-        <Pressable
+        <TouchableOpacity
             style={styles.tabBarItemContainer}
             onLongPress={onLongPress}
             onPress={onPress}
@@ -31,7 +36,7 @@ const TabItem = props => {
                 style={styles.tabBarItemImage}
                 source={isFocused ? imageHighlighted : image}
             ></Image>
-        </Pressable>
+        </TouchableOpacity>
     )
 }
 
@@ -39,6 +44,8 @@ const TabBar = props => {
     const {state, descriptors, navigation} = props
 
     const onPress = ({key, name, isFocused}) => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+
         const event = navigation.emit({
             type: 'tabPress',
             target: key,
@@ -112,9 +119,7 @@ const Main = props => {
                             backgroundColor: white
                         },
                         headerLeft: ({canGoBack}) =>
-                            canGoBack ? (
-                                <BackButton navigation={navigation} />
-                            ) : null
+                            canGoBack ? <BackButton /> : null
                     })}
                 >
                     <>
