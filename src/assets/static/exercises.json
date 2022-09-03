@@ -1,42 +1,22 @@
 {
     "SEATED_BARBELL_OVERHEAD_PRESS": {
         "name": "Seated Barbell Overhead Press",
-        "description": "Test",
+        "description": "Standing shoulder presses are better for functional strength and for people who do CrossFit, powerlifting, weightlifting, or Strongman. Seated shoulder presses are better for hypertrophy because they isolate the shoulders more. They're also a better option for people who haven't yet built up a lot of core strength.",
         "categories": {
             "simple": ["Shoulders", "Upper Back"],
             "advanced": ["Anterior Deltoids", "Medial Deltoid", "Posterior Deltoid", "Triceps"]
-        }
-    },
-    "SEATED_BARBELL_OVERHEAD_PRESSa": {
-        "name": "Seated Barbell Overhead Pressa",
-        "description": "Test",
-        "categories": {
-            "simple": ["Shoulders", "Upper Back"],
-            "advanced": ["Anterior Deltoids", "Medial Deltoid", "Posterior Deltoid", "Triceps"]
-        }
-    },
-    "SEATED_BARBELL_OVERHEAD_PRESSb": {
-        "name": "Seated Barbell Overhead Pressb",
-        "description": "Test",
-        "categories": {
-            "simple": ["Shoulders", "Upper Back"],
-            "advanced": ["Anterior Deltoids", "Medial Deltoid", "Posterior Deltoid", "Triceps"]
-        }
-    },
-    "SEATED_BARBELL_OVERHEAD_PRESSc": {
-        "name": "Seated Barbell Overhead Pressc",
-        "description": "Test",
-        "categories": {
-            "simple": ["Shoulders", "Upper Back"],
-            "advanced": ["Anterior Deltoids", "Medial Deltoid", "Posterior Deltoid", "Triceps"]
-        }
-    },
-        "SEATED_BARBELL_OVERHEAD_PRESSd": {
-        "name": "Seated Barbell Overhead Pressd",
-        "description": "Test",
-        "categories": {
-            "simple": ["Shoulders", "Upper Back"],
-            "advanced": ["Anterior Deltoids", "Medial Deltoid", "Posterior Deltoid", "Triceps"]
-        }
+        },
+        "instructions": [
+            "First pick up the barbell",
+            "Next sit down with the barbell",
+            "Lift the barbell above your head until full extension",
+            "Lift the barbell back down to your chin",
+            "Return the barbell to it's storage"
+        ],
+        "tips": [
+            "Ensure to engage your back muscles and prevent back pain by enforcing good posture",
+            "Breath in when going up, and out when going down",
+            "Try out other exercises which engage different muscle groups, instead of resting between sets"
+        ]
     }
 }

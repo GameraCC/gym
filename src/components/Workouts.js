@@ -34,6 +34,7 @@ import {EXERCISES} from '@assets/static'
 import {light_black, light_white} from '../assets/colors'
 import BackButton from './BackButton'
 import * as Haptics from 'expo-haptics'
+import Carousel from './Carousel'
 
 const Stack = createNativeStackNavigator()
 const BottomSheetStack = new createNativeStackNavigator()
@@ -299,6 +300,7 @@ const CreateWorkoutHeader = props => {
 }
 
 const ExerciseBottomSheetHeader = props => {
+    const {name} = props
     const navigation = useNavigation()
 
     return (
@@ -307,7 +309,7 @@ const ExerciseBottomSheetHeader = props => {
                 style={{container: styles.bottomSheetHeaderBackButton}}
                 navigation={navigation}
             />
-            <Text style={styles.bottomSheetHeaderTitle}>Exercise Info</Text>
+            <Text style={styles.bottomSheetHeaderTitle}>{name}</Text>
         </View>
     )
 }
@@ -315,22 +317,191 @@ const ExerciseBottomSheetHeader = props => {
 const ExerciseBottomSheetInfo = props => {
     const {
         route: {
-            params: {categories, description, id, name}
+            params: {categories, id, name, instructions, tips}
         }
     } = props
 
+    const description = `Standing shoulder presses are better for functional strength and for people who do CrossFit, powerlifting, weightlifting, or Strongman. Seated shoulder presses are better for hypertrophy because they isolate the shoulders more. They're also a better option for people who haven't yet built up a lot of core strength`
+
+    const styles = {
+        container: {
+            width: '100%',
+            height: '100%',
+            backgroundColor: white
+        },
+        infoContainer: {
+            padding: 8,
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
+            alignItems: 'flex-start'
+        },
+        seperatorContainer: {
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+        },
+        seperator: {
+            marginTop: 12,
+            marginBottom: 12,
+            backgroundColor: black,
+            width: '90%',
+            height: 1
+        },
+        exerciseImage: {
+            resizeMode: 'contain',
+            width: 148,
+            height: 148,
+            marginRight: 16
+        },
+        exerciseDescriptionContainer: {
+            height: 176,
+            flex: 1
+        },
+        exerciseDescription: {
+            marginRight: 16,
+            fontSize: 14
+        },
+        instructionContainer: {
+            padding: 8
+        },
+        instructionTitle: {
+            width: '100%',
+            marginLeft: 24,
+            textAlign: 'left',
+            fontFamily: 'Helvetica-Bold',
+            fontSize: 14
+        },
+        instructionsContainer: {
+            marginTop: 12,
+            marginRight: 24,
+            marginLeft: 24
+        },
+        instructionTextContainer: {
+            marginTop: 4,
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+        },
+        instructionIndex: {
+            fontFamily: 'Helvetica-Bold',
+            fontSize: 16
+        },
+        instructionValue: {
+            marginLeft: 16,
+            width: '100%',
+            textAlign: 'left',
+            fontSize: 14
+        },
+        tipContainer: {
+            width: '100%',
+            padding: 8
+        },
+        tipTitle: {
+            width: '100%',
+            fontSize: 14,
+            fontFamily: 'Helvetica-Bold',
+            textAlign: 'center'
+        },
+        tipTextContainer: {
+            marginLeft: 24,
+            marginRight: 24
+        },
+        tip: {
+            textAlign: 'center'
+        },
+        demonstrationContainer: {
+            padding: 8,
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+        },
+        demonstrationTitle: {
+            width: '100%',
+            marginBottom: 16,
+            fontSize: 14,
+            fontFamily: 'Helvetica-Bold',
+            textAlign: 'center'
+        },
+        demonstrationImage: {
+            marginLeft: 24,
+            marginRight: 24,
+            resizeMode: 'cover'
+        }
+    }
+
+    const Tip = ({data: tip}) => {
+        return (
+            <View style={styles.tipTextContainer}>
+                <Text style={styles.tip} numberOfLines={2}>
+                    {tip}
+                </Text>
+            </View>
+        )
+    }
+
+    const Seperator = () => (
+        <View style={styles.seperatorContainer}>
+            <View style={styles.seperator} />
+        </View>
+    )
+
+    const Instruction = props => {
+        const {index, instruction} = props
+
+        return (
+            <View style={styles.instructionTextContainer}>
+                <Text style={styles.instructionIndex}>{index}</Text>
+                <Text style={styles.instructionValue} numberOfLines={3}>
+                    {instruction}
+                </Text>
+            </View>
+        )
+    }
+
     // Display info sheet
     return (
-        <ScrollView
-            bounces={false}
-            stickyHeaderIndices={[0]}
-            style={styles.container}
-        >
-            <ExerciseBottomSheetHeader />
-            <View style={styles.exerciseBottomSheetInfo}>
-                <Text>{name}</Text>
-            </View>
-        </ScrollView>
+        <>
+            <ExerciseBottomSheetHeader name={name} />
+            <ScrollView bounces={true} style={styles.container}>
+                <View style={styles.infoContainer}>
+                    <Image style={styles.exerciseImage} source={Images[id]} />
+                    <View style={styles.exerciseDescriptionContainer}>
+                        <Text style={styles.exerciseDescription}>
+                            {description}
+                        </Text>
+                    </View>
+                </View>
+                <Seperator />
+                <View style={styles.instructionContainer}>
+                    <Text style={styles.instructionTitle}>Instructions</Text>
+                    <View style={styles.instructionsContainer}>
+                        {instructions.map((instruction, i) => (
+                            <Instruction
+                                index={i + 1}
+                                instruction={instruction}
+                            />
+                        ))}
+                    </View>
+                </View>
+                <Seperator />
+                <View style={styles.tipContainer}>
+                    <Text style={styles.tipTitle}>Tips</Text>
+                    <Carousel data={tips} Item={Tip} />
+                </View>
+                <Seperator />
+                <View style={styles.demonstrationContainer}>
+                    <Text style={styles.demonstrationTitle}>Demonstration</Text>
+                    <Image
+                        style={styles.demonstrationImage}
+                        source={Images[id]}
+                    />
+                </View>
+            </ScrollView>
+        </>
     )
 }
 
@@ -373,6 +544,8 @@ const ExerciseBottomSheetItem = props => {
         categories,
         name,
         description,
+        instructions,
+        tips,
         handleItemClick,
         firstItem,
         lastItem
@@ -382,7 +555,7 @@ const ExerciseBottomSheetItem = props => {
     const handlePressIn = () => setHighlighted(true)
     const handlePressOut = () => setHighlighted(false)
     const handlePress = () =>
-        handleItemClick({id, categories, name, description})
+        handleItemClick({id, categories, name, description, instructions, tips})
 
     return (
         <View
@@ -453,7 +626,7 @@ const ExerciseBottomSheetList = props => {
     const handleKeyboardFocus = () => expand()
 
     const handleItemClick = useCallback(
-        ({id, categories, name, description}) => {
+        ({id, categories, name, description, instructions, tips}) => {
             // Dismiss keyboard if present
             Keyboard.dismiss()
 
@@ -462,7 +635,9 @@ const ExerciseBottomSheetList = props => {
                 id,
                 categories,
                 name,
-                description
+                description,
+                instructions,
+                tips
             }
 
             navigation.navigate('exercise-info', props)
@@ -496,7 +671,14 @@ const ExerciseBottomSheetList = props => {
                 style={styles.exerciseBottomSheetList}
                 sections={filteredExercises}
                 renderItem={({
-                    item: {id, categories, name, description},
+                    item: {
+                        id,
+                        categories,
+                        name,
+                        description,
+                        instructions,
+                        tips
+                    },
                     index,
                     section: {title}
                 }) => {
@@ -514,6 +696,8 @@ const ExerciseBottomSheetList = props => {
                             name={name}
                             description={description}
                             categories={categories}
+                            instructions={instructions}
+                            tips={tips}
                             firstItem={firstItem}
                             lastItem={lastItem}
                             handleItemClick={handleItemClick}
@@ -887,7 +1071,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 16,
         backgroundColor: 'white'
     },
     bottomSheetHeaderTitle: {
