@@ -58,6 +58,7 @@ const Carousel = props => {
         <>
             <ScrollView
                 style={styles.container}
+                horizontal
                 bounces={false}
                 snapToInterval={snapPoint}
                 snapToAlignment="center"
