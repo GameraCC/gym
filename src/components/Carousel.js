@@ -18,6 +18,7 @@ const PaginationDots = props => {
                 .fill(0)
                 .map((_, i) => (
                     <View
+                        key={i}
                         style={
                             activeIndex === i ? styles.activeDot : styles.dot
                         }
@@ -102,22 +103,22 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     dot: {
-        height: 10,
-        width: 10,
+        height: 8,
+        width: 8,
         marginLeft: 4,
         marginRight: 4,
         borderRadius: 12,
         backgroundColor: black,
-        opacity: 0.25
+        opacity: 0.15
     },
     activeDot: {
-        height: 10,
-        width: 10,
+        height: 8,
+        width: 8,
         marginLeft: 4,
         marginRight: 4,
         borderRadius: 12,
         backgroundColor: black,
-        opacity: 0.75
+        opacity: 0.8
     }
 })
 

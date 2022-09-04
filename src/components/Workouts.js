@@ -17,7 +17,18 @@ import Constants from 'expo-constants'
 import {useSelector, useDispatch} from 'react-redux'
 import {NavigationContainer, useNavigation} from '@react-navigation/native'
 import {createNativeStackNavigator} from '@react-navigation/native-stack'
-import {black, gray, green, white} from '@assets/colors'
+import {
+    black,
+    gray,
+    green,
+    white,
+    orange,
+    light_black,
+    light_white,
+    red,
+    blue,
+    darker_blue
+} from '@assets/colors'
 import {deleteWorkout, getAllWorkouts} from '../actions/user'
 import {Header, EditableHeader} from './Header'
 import Animated, {
@@ -26,12 +37,12 @@ import Animated, {
     useAnimatedStyle,
     interpolate,
     interpolateColor,
-    Extrapolate
+    Extrapolate,
+    LightSpeedInRight
 } from 'react-native-reanimated'
 import BottomSheet, {useBottomSheet} from '@gorhom/bottom-sheet'
 import Images from '@assets/images'
 import {EXERCISES} from '@assets/static'
-import {light_black, light_white} from '../assets/colors'
 import BackButton from './BackButton'
 import * as Haptics from 'expo-haptics'
 import Carousel from './Carousel'
@@ -317,11 +328,9 @@ const ExerciseBottomSheetHeader = props => {
 const ExerciseBottomSheetInfo = props => {
     const {
         route: {
-            params: {categories, id, name, instructions, tips}
+            params: {categories, description, id, name, instructions, tips}
         }
     } = props
-
-    const description = `Standing shoulder presses are better for functional strength and for people who do CrossFit, powerlifting, weightlifting, or Strongman. Seated shoulder presses are better for hypertrophy because they isolate the shoulders more. They're also a better option for people who haven't yet built up a lot of core strength`
 
     const styles = {
         container: {
@@ -360,6 +369,7 @@ const ExerciseBottomSheetInfo = props => {
             flex: 1
         },
         exerciseDescription: {
+            fontFamily: 'Lora-Regular',
             marginRight: 16,
             fontSize: 14
         },
@@ -370,7 +380,7 @@ const ExerciseBottomSheetInfo = props => {
             width: '100%',
             marginLeft: 24,
             textAlign: 'left',
-            fontFamily: 'Helvetica-Bold',
+            fontFamily: 'Lora-Bold',
             fontSize: 14
         },
         instructionsContainer: {
@@ -386,10 +396,11 @@ const ExerciseBottomSheetInfo = props => {
             alignItems: 'center'
         },
         instructionIndex: {
-            fontFamily: 'Helvetica-Bold',
+            fontFamily: 'Lora-Bold',
             fontSize: 16
         },
         instructionValue: {
+            fontFamily: 'Lora-Regular',
             marginLeft: 16,
             width: '100%',
             textAlign: 'left',
@@ -402,7 +413,7 @@ const ExerciseBottomSheetInfo = props => {
         tipTitle: {
             width: '100%',
             fontSize: 14,
-            fontFamily: 'Helvetica-Bold',
+            fontFamily: 'Lora-SemiBold',
             textAlign: 'center'
         },
         tipTextContainer: {
@@ -410,6 +421,8 @@ const ExerciseBottomSheetInfo = props => {
             marginRight: 24
         },
         tip: {
+            fontFamily: 'Lora-Regular',
+            fontSize: 14,
             textAlign: 'center'
         },
         demonstrationContainer: {
@@ -417,19 +430,55 @@ const ExerciseBottomSheetInfo = props => {
             width: '100%',
             display: 'flex',
             justifyContent: 'center',
-            alignItems: 'center'
+            alignItems: 'center',
+            paddingBottom: 64
         },
         demonstrationTitle: {
             width: '100%',
             marginBottom: 16,
             fontSize: 14,
-            fontFamily: 'Helvetica-Bold',
+            fontFamily: 'Lora-SemiBold',
             textAlign: 'center'
         },
         demonstrationImage: {
             marginLeft: 24,
             marginRight: 24,
             resizeMode: 'cover'
+        },
+        categoriesContentContainer: {
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center'
+        },
+        categoriesContainer: {
+            padding: 8,
+            marginLeft: 24,
+            marginRight: 24,
+            marginBottom: 8
+        },
+        category: {
+            padding: 8,
+            paddingLeft: 16,
+            paddingRight: 16,
+            marginLeft: 4,
+            marginRight: 4,
+            borderRadius: 12,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+        },
+        simpleCategory: {
+            backgroundColor: darker_blue
+        },
+        advancedCategory: {
+            backgroundColor: blue
+        },
+        categoryText: {
+            fontSize: 12,
+            color: white,
+            fontFamily: 'Helvetica-Bold',
+            textAlign: 'center'
         }
     }
 
@@ -467,6 +516,40 @@ const ExerciseBottomSheetInfo = props => {
         <>
             <ExerciseBottomSheetHeader name={name} />
             <ScrollView bounces={true} style={styles.container}>
+                <ScrollView
+                    horizontal
+                    contentContainerStyle={styles.categoriesContentContainer}
+                    style={styles.categoriesContainer}
+                    showsHorizontalScrollIndicator={false}
+                >
+                    {categories.simple
+                        .sort((a, b) => a.localeCompare(b)) // Sort lexicographically
+                        .map((category, i) => (
+                            <View
+                                key={i}
+                                style={[styles.category, styles.simpleCategory]}
+                            >
+                                <Text key={i} style={styles.categoryText}>
+                                    {category}
+                                </Text>
+                            </View>
+                        ))}
+                    {categories.advanced
+                        .sort((a, b) => a.localeCompare(b)) // Sort lexicographically
+                        .map((category, i) => (
+                            <View
+                                key={i}
+                                style={[
+                                    styles.category,
+                                    styles.advancedCategory
+                                ]}
+                            >
+                                <Text key={i} style={styles.categoryText}>
+                                    {category}
+                                </Text>
+                            </View>
+                        ))}
+                </ScrollView>
                 <View style={styles.infoContainer}>
                     <Image style={styles.exerciseImage} source={Images[id]} />
                     <View style={styles.exerciseDescriptionContainer}>
@@ -481,6 +564,7 @@ const ExerciseBottomSheetInfo = props => {
                     <View style={styles.instructionsContainer}>
                         {instructions.map((instruction, i) => (
                             <Instruction
+                                key={i}
                                 index={i + 1}
                                 instruction={instruction}
                             />
@@ -515,29 +599,6 @@ const ExerciseBottomSheetSection = props => {
     )
 }
 
-/**
- * Wraps the SectionList item to enable style application on the parent container, specifically a shadow
- */
-const ExerciseBottomSheetItemContainer = props => {
-    const {children, ...otherProps} = props
-
-    // A section's item property has a nested data property
-    const isSection = otherProps.item.hasOwnProperty('data')
-
-    return (
-        <View
-            {...otherProps}
-            style={[
-                isSection
-                    ? styles.exerciseBottomSheetSectionContainer
-                    : styles.exerciseBottomSheetItemContainer
-            ]}
-        >
-            {children}
-        </View>
-    )
-}
-
 const ExerciseBottomSheetItem = props => {
     const {
         id,
@@ -568,7 +629,9 @@ const ExerciseBottomSheetItem = props => {
             <Pressable
                 style={[
                     styles.exerciseBottomSheetItemButton,
-                    highlighted && styles.exerciseBottomSheetItemHighlighted
+                    highlighted && styles.exerciseBottomSheetItemHighlighted,
+                    firstItem && styles.exerciseBottomSheetFirstItemButton,
+                    lastItem && styles.exerciseBottomSheetLastItemButton
                 ]}
                 onPress={handlePress}
                 onPressIn={handlePressIn}
@@ -707,7 +770,6 @@ const ExerciseBottomSheetList = props => {
                 renderSectionHeader={({section: {title}}) => {
                     return <ExerciseBottomSheetSection title={title} />
                 }}
-                CellRendererComponent={ExerciseBottomSheetItemContainer} // Wrap item with this component
                 stickySectionHeadersEnabled={false}
                 keyboardDismissMode="on-drag"
                 keyboardShouldPersistTaps="always"
@@ -1005,31 +1067,23 @@ const styles = StyleSheet.create({
         fontSize: 14.5,
         textAlign: 'left'
     },
-    exerciseBottomSheetItemContainer: {
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2
-        },
-        shadowOpacity: 0.23,
-        shadowRadius: 2.62,
-
-        elevation: 4
-    },
-    exerciseBottomSheetSectionContainer: {},
     exerciseBottomSheetItem: {
+        borderLeftWidth: 1.5,
+        borderRightWidth: 1.5,
+        marginRight: 16,
+        marginLeft: 16,
         overflow: 'hidden',
         height: 64,
-        marginRight: 16,
-        marginLeft: 16
+        borderBottomWidth: 1.5
     },
     exerciseBottomSheetFirstItem: {
-        borderTopLeftRadius: 12,
-        borderTopRightRadius: 12
+        borderTopWidth: 1.5,
+        borderTopRightRadius: 10,
+        borderTopLeftRadius: 10
     },
     exerciseBottomSheetLastItem: {
-        borderBottomLeftRadius: 12,
-        borderBottomRightRadius: 12
+        borderBottomRightRadius: 10,
+        borderBottomLeftRadius: 10
     },
     exerciseBottomSheetItemButton: {
         display: 'flex',
@@ -1039,6 +1093,14 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '100%',
         backgroundColor: white
+    },
+    exerciseBottomSheetFirstItemButton: {
+        borderTopRightRadius: 8,
+        borderTopLeftRadius: 8
+    },
+    exerciseBottomSheetLastItemButton: {
+        borderBottomRightRadius: 8,
+        borderBottomLeftRadius: 8
     },
     exerciseBottomSheetItemImage: {
         width: 48,

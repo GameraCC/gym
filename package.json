@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "main": "./src/App.js",
   "scripts": {
-    "start-mac": "STAGING=true expo start",
+    "start-mac": "STAGING=true expo start -c",
     "android-mac": "STAGING=true expo start --android",
     "ios-mac": "STAGING=true expo start --ios",
     "web-mac": "STAGING=true expo start --web",
     "eject-mac": "STAGING=true expo eject",
-    "start-win": "set STAGING=true && expo start",
+    "start-win": "set STAGING=true && expo start -c",
     "android-win": "set STAGING=true && expo start --android",
     "ios-win": "set STAGING=true && expo start --ios",
     "web-win": "set STAGING=true && expo start --web",
@@ -33,7 +33,9 @@
     "react-redux": "^8.0.2",
     "redux": "^4.2.0",
     "redux-thunk": "^2.4.1",
-    "expo-haptics": "~11.2.0"
+    "expo-haptics": "~11.2.0",
+    "expo-splash-screen": "~0.15.1",
+    "expo-font": "~10.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
