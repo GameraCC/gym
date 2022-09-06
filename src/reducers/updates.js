@@ -10,17 +10,17 @@ import {ADD_EXERCISE} from '../actions/types'
 
 const initialState = {
     exercise: {
-        name: '' // Name of exercise to be added, stored in global redux to avoid passing callbacks between components & wrapping screens in contexts
+        id: '' // Id of exercise to be added, stored in global redux to avoid passing callbacks between components & wrapping screens in contexts
     }
 }
 
-const misc = (state = initialState, action) => {
+const updates = (state = initialState, action) => {
     switch (action.type) {
         case ADD_EXERCISE:
             state = {
                 ...state,
                 exercise: {
-                    name: action.name
+                    id: action.id
                 }
             }
             break
@@ -31,4 +31,4 @@ const misc = (state = initialState, action) => {
     return state
 }
 
-export default misc
+export default updates

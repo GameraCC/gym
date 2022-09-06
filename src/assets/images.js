@@ -9,6 +9,8 @@ export default {
     SEARCH: require('./images/icons/search.png'),
     HOME: require('./images/icons/home.png'),
     HOME_HIGHLIGHTED: require('./images/icons/home-highlighted.png'),
+    ADD: require('./images/icons/add.png'),
+    ADD_HIGHLIGHTED: require('./images/icons/add-highlighted.png'),
 
     SEATED_BARBELL_OVERHEAD_PRESS: require('./images/exercises/SEATED_BARBELL_OVERHEAD_PRESS.gif'),
     SEATED_BARBELL_OVERHEAD_PRESSa: require('./images/exercises/SEATED_BARBELL_OVERHEAD_PRESS.gif'),

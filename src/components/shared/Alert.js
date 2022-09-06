@@ -1,8 +1,10 @@
 import {useEffect, useState} from 'react'
 import {Keyboard, StyleSheet, View, Pressable, Text} from 'react-native'
 import {useSelector, useDispatch} from 'react-redux'
-import {resetAlert} from '../actions/alert'
-import {black, green, red, white} from '@assets/colors'
+
+import {resetAlert} from '@actions/alert'
+
+import {black, red, white} from '@assets/colors'
 
 const ErrorAlert = props => {
     const {title, message} = props
@@ -15,7 +17,7 @@ const ErrorAlert = props => {
 
     return (
         <View style={styles.wrapper}>
-            <View style={[styles.container]}>
+            <View style={styles.container}>
                 <Text style={styles.title} numberOfLines={1}>
                     {title}
                 </Text>

@@ -1,18 +1,19 @@
-import {useCallback, useEffect} from 'react'
-import {registerRootComponent} from 'expo'
+import {useEffect} from 'react'
 import {createStore, applyMiddleware} from 'redux'
 import {Provider} from 'react-redux'
-import rootReducer from './reducers'
 import thunk from 'redux-thunk'
-import {View} from 'react-native'
+import {registerRootComponent} from 'expo'
 import {StatusBar} from 'expo-status-bar'
 import * as SplashScreen from 'expo-splash-screen'
-import {fonts} from '@assets/fonts'
 import {useFonts} from 'expo-font'
 
 // Custom global alert utilizing absolute positioning available on any screen.
-import Alert from './components/Alert'
-import Main from './components/Main'
+import Alert from '@shared/Alert'
+import Main from './components/main'
+
+import rootReducer from './reducers'
+
+import {fonts} from '@assets/fonts'
 
 const store = createStore(rootReducer, applyMiddleware(thunk))
 

@@ -1,7 +1,7 @@
-import {useBottomSheetDynamicSnapPoints} from '@gorhom/bottom-sheet'
-import {useRef, useState} from 'react'
+import {useState} from 'react'
 import {StyleSheet, View, ScrollView} from 'react-native'
-import {black, light_black, white} from '../assets/colors'
+
+import {black} from '@assets/colors'
 
 /**
  * Pagination dots displayed below items
@@ -60,7 +60,6 @@ const Carousel = props => {
             <ScrollView
                 style={styles.container}
                 horizontal
-                bounces={false}
                 snapToInterval={snapPoint}
                 snapToAlignment="center"
                 decelerationRate="fast"

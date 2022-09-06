@@ -1,3 +1,4 @@
+import {useState} from 'react'
 import {
     Platform,
     Keyboard,
@@ -8,15 +9,16 @@ import {
     TextInput,
     Pressable
 } from 'react-native'
-import {useState} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
-import {login} from '../actions/session'
-import {setUsername, setPassword, resetUser} from '../actions/user'
-import {usernameConstraint, passwordConstraint} from '../lib/constraints'
-import {newAlert} from '../actions/alert'
-import {background, white, black} from '@assets/colors'
-import KeyboardAvoidingWrapper from './KeyboardAvoidingWrapper'
+import {login} from '@actions/session'
+import {setUsername, setPassword, resetUser} from '@actions/user'
+import {newAlert} from '@actions/alert'
+
+import KeyboardAvoidingWrapper from '@shared/KeyboardAvoidingWrapper'
+
 import Images from '@assets/images'
+import {background, white, black} from '@assets/colors'
+import {usernameConstraint, passwordConstraint} from '@lib/constraints'
 
 const Login = ({navigation}) => {
     const [isSignupHighlighted, setSignupHighlighted] = useState(false)

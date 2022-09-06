@@ -22,10 +22,8 @@ import {
     gray,
     green,
     white,
-    orange,
     light_black,
     light_white,
-    red,
     blue,
     darker_blue
 } from '@assets/colors'
@@ -37,8 +35,7 @@ import Animated, {
     useAnimatedStyle,
     interpolate,
     interpolateColor,
-    Extrapolate,
-    LightSpeedInRight
+    Extrapolate
 } from 'react-native-reanimated'
 import BottomSheet, {useBottomSheet} from '@gorhom/bottom-sheet'
 import Images from '@assets/images'
@@ -46,6 +43,7 @@ import {EXERCISES} from '@assets/static'
 import BackButton from './BackButton'
 import * as Haptics from 'expo-haptics'
 import Carousel from './Carousel'
+import {addExercise} from '../actions/updates'
 
 const Stack = createNativeStackNavigator()
 const BottomSheetStack = new createNativeStackNavigator()
@@ -310,17 +308,54 @@ const CreateWorkoutHeader = props => {
     )
 }
 
-const ExerciseBottomSheetHeader = props => {
-    const {name} = props
+const ExerciseBottomSheetInfoHeader = props => {
+    const {id, name} = props
+
+    const [isHighlighted, setIsHighlighted] = useState(false)
+
+    const bottomSheet = useBottomSheet()
     const navigation = useNavigation()
+    const dispatch = useDispatch()
+
+    const onPressInHandler = () => setIsHighlighted(true)
+    const onPressOutHandler = () => setIsHighlighted(false)
+    const addExerciseHandler = () => {
+        // Dispatch an add exercise action
+        dispatch(addExercise(id))
+
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+        // Close the bottom sheet and bring it back up
+        bottomSheet.close()
+
+        // While the bottom sheet is closed, navigate back to the main page to avoid automatic navigation upon collapse
+        setTimeout(() => {
+            navigation.goBack()
+
+            // Show the collapsed bottom sheet after closing and resetting navigation
+            setTimeout(() => {
+                bottomSheet.snapToIndex(0)
+            }, 150)
+        }, 250)
+    }
 
     return (
-        <View style={styles.bottomSheetHeader}>
+        <View>
             <BackButton
                 style={{container: styles.bottomSheetHeaderBackButton}}
                 navigation={navigation}
             />
             <Text style={styles.bottomSheetHeaderTitle}>{name}</Text>
+            <Pressable
+                style={[styles.addExerciseButton]}
+                onPress={addExerciseHandler}
+                onPressIn={onPressInHandler}
+                onPressOut={onPressOutHandler}
+            >
+                <Image
+                    style={styles.addExerciseImage}
+                    source={isHighlighted ? Images.ADD_HIGHLIGHTED : Images.ADD}
+                ></Image>
+            </Pressable>
         </View>
     )
 }
@@ -331,156 +366,6 @@ const ExerciseBottomSheetInfo = props => {
             params: {categories, description, id, name, instructions, tips}
         }
     } = props
-
-    const styles = {
-        container: {
-            width: '100%',
-            height: '100%',
-            backgroundColor: white
-        },
-        infoContainer: {
-            padding: 8,
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'flex-start',
-            alignItems: 'flex-start'
-        },
-        seperatorContainer: {
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center'
-        },
-        seperator: {
-            marginTop: 12,
-            marginBottom: 12,
-            backgroundColor: black,
-            width: '90%',
-            height: 1
-        },
-        exerciseImage: {
-            resizeMode: 'contain',
-            width: 148,
-            height: 148,
-            marginRight: 16
-        },
-        exerciseDescriptionContainer: {
-            height: 176,
-            flex: 1
-        },
-        exerciseDescription: {
-            fontFamily: 'Lora-Regular',
-            marginRight: 16,
-            fontSize: 14
-        },
-        instructionContainer: {
-            padding: 8
-        },
-        instructionTitle: {
-            width: '100%',
-            marginLeft: 24,
-            textAlign: 'left',
-            fontFamily: 'Lora-Bold',
-            fontSize: 14
-        },
-        instructionsContainer: {
-            marginTop: 12,
-            marginRight: 24,
-            marginLeft: 24
-        },
-        instructionTextContainer: {
-            marginTop: 4,
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center'
-        },
-        instructionIndex: {
-            fontFamily: 'Lora-Bold',
-            fontSize: 16
-        },
-        instructionValue: {
-            fontFamily: 'Lora-Regular',
-            marginLeft: 16,
-            width: '100%',
-            textAlign: 'left',
-            fontSize: 14
-        },
-        tipContainer: {
-            width: '100%',
-            padding: 8
-        },
-        tipTitle: {
-            width: '100%',
-            fontSize: 14,
-            fontFamily: 'Lora-SemiBold',
-            textAlign: 'center'
-        },
-        tipTextContainer: {
-            marginLeft: 24,
-            marginRight: 24
-        },
-        tip: {
-            fontFamily: 'Lora-Regular',
-            fontSize: 14,
-            textAlign: 'center'
-        },
-        demonstrationContainer: {
-            padding: 8,
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            paddingBottom: 64
-        },
-        demonstrationTitle: {
-            width: '100%',
-            marginBottom: 16,
-            fontSize: 14,
-            fontFamily: 'Lora-SemiBold',
-            textAlign: 'center'
-        },
-        demonstrationImage: {
-            marginLeft: 24,
-            marginRight: 24,
-            resizeMode: 'cover'
-        },
-        categoriesContentContainer: {
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center'
-        },
-        categoriesContainer: {
-            padding: 8,
-            marginLeft: 24,
-            marginRight: 24,
-            marginBottom: 8
-        },
-        category: {
-            padding: 8,
-            paddingLeft: 16,
-            paddingRight: 16,
-            marginLeft: 4,
-            marginRight: 4,
-            borderRadius: 12,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center'
-        },
-        simpleCategory: {
-            backgroundColor: darker_blue
-        },
-        advancedCategory: {
-            backgroundColor: blue
-        },
-        categoryText: {
-            fontSize: 12,
-            color: white,
-            fontFamily: 'Helvetica-Bold',
-            textAlign: 'center'
-        }
-    }
 
     const Tip = ({data: tip}) => {
         return (
@@ -514,7 +399,7 @@ const ExerciseBottomSheetInfo = props => {
     // Display info sheet
     return (
         <>
-            <ExerciseBottomSheetHeader name={name} />
+            <ExerciseBottomSheetInfoHeader id={id} name={name} />
             <ScrollView bounces={true} style={styles.container}>
                 <ScrollView
                     horizontal
@@ -785,8 +670,8 @@ const ExerciseBottomSheetBackdropComponent = props => {
 
     const isAddExerciseRendered = useRef(false)
 
-    // Name of exercise to be added, stored in global redux to avoid passing callbacks between components & wrapping screens in contexts
-    const exerciseName = useSelector(state => state.updates.exercise.name)
+    // Id of exercise to be added, stored in global redux to avoid passing callbacks between components & wrapping screens in contexts
+    const exerciseId = useSelector(state => state.updates.exercise.id)
 
     const bottomSheetRef = useBottomSheet()
     const navigation = useNavigation()
@@ -802,10 +687,10 @@ const ExerciseBottomSheetBackdropComponent = props => {
         // Don't run on first mount
         if (!isAddExerciseRendered.current) isAddExerciseRendered.current = true
         else {
-            // exerciseName
+            console.log('added exericse:', exerciseId)
             setSelectedExercises('')
         }
-    }, [exerciseName])
+    }, [exerciseId])
 
     const opacity = useAnimatedStyle(() => {
         const style = {
@@ -1147,7 +1032,178 @@ const styles = StyleSheet.create({
         position: 'absolute',
         left: 20
     },
-    exerciseBottomSheetInfo: {}
+    infoContainer: {
+        padding: 8,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start'
+    },
+    seperatorContainer: {
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    seperator: {
+        marginTop: 12,
+        marginBottom: 12,
+        backgroundColor: black,
+        width: '90%',
+        height: 0.75
+    },
+    exerciseImage: {
+        resizeMode: 'contain',
+        width: 148,
+        height: 148,
+        marginRight: 16
+    },
+    exerciseDescriptionContainer: {
+        height: 164,
+        flex: 1
+    },
+    exerciseDescription: {
+        fontFamily: 'Lora-Regular',
+        marginRight: 16,
+        fontSize: 14
+    },
+    instructionContainer: {
+        padding: 8
+    },
+    instructionTitle: {
+        width: '100%',
+        marginLeft: 24,
+        textAlign: 'left',
+        fontFamily: 'Lora-Bold',
+        fontSize: 14
+    },
+    instructionsContainer: {
+        marginTop: 12,
+        marginRight: 24,
+        marginLeft: 24
+    },
+    instructionTextContainer: {
+        marginTop: 4,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    },
+    instructionIndex: {
+        fontFamily: 'Lora-Bold',
+        fontSize: 16
+    },
+    instructionValue: {
+        fontFamily: 'Lora-Regular',
+        marginLeft: 16,
+        width: '100%',
+        textAlign: 'left',
+        fontSize: 14
+    },
+    tipContainer: {
+        width: '100%',
+        padding: 8
+    },
+    tipTitle: {
+        width: '100%',
+        fontSize: 14,
+        fontFamily: 'Lora-SemiBold',
+        textAlign: 'center'
+    },
+    tipTextContainer: {
+        marginLeft: 24,
+        marginRight: 24
+    },
+    tip: {
+        fontFamily: 'Lora-Regular',
+        fontSize: 14,
+        textAlign: 'center'
+    },
+    demonstrationContainer: {
+        padding: 8,
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingBottom: 64
+    },
+    demonstrationTitle: {
+        width: '100%',
+        marginBottom: 16,
+        fontSize: 14,
+        fontFamily: 'Lora-SemiBold',
+        textAlign: 'center'
+    },
+    demonstrationImage: {
+        marginLeft: 24,
+        marginRight: 24,
+        resizeMode: 'cover'
+    },
+    categoriesContentContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    categoriesContainer: {
+        padding: 8,
+        marginLeft: 24,
+        marginRight: 24,
+        marginBottom: 8
+    },
+    category: {
+        padding: 8,
+        paddingLeft: 16,
+        paddingRight: 16,
+        marginLeft: 4,
+        marginRight: 4,
+        borderRadius: 12,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    simpleCategory: {
+        backgroundColor: darker_blue
+    },
+    advancedCategory: {
+        backgroundColor: blue
+    },
+    categoryText: {
+        fontSize: 12,
+        color: white,
+        fontFamily: 'Helvetica-Bold',
+        textAlign: 'center'
+    },
+    bottomSheetHeaderBackButton: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100%',
+        position: 'absolute',
+        left: 20
+    },
+    bottomSheetHeader: {
+        width: '100%',
+        height: 48,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'white'
+    },
+    bottomSheetHeaderTitle: {
+        fontFamily: 'Helvetica-Bold',
+        fontSize: 16
+    },
+    addExerciseButton: {
+        position: 'absolute',
+        right: 20
+    },
+    addExerciseImage: {
+        resizeMode: 'contain',
+        width: 28,
+        height: 28
+    }
 })
 
 export default Workouts
