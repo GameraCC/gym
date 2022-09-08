@@ -44,12 +44,22 @@ const ExerciseItemPart = props => {
                     onChange={updateRepsValue}
                 />
                 <Pressable
-                    style={styles.unitButton}
+                    style={[
+                        styles.unitButton,
+                        isRepsHighlighted && styles.buttonHighlighted
+                    ]}
                     onPressIn={onPressInRepsHandler}
                     onPressOut={onPressOutRepsHandler}
                     onPress={updateRepsUnit}
                 >
-                    <Text style={styles.unit}>{repsUnit}</Text>
+                    <Text
+                        style={[
+                            styles.unit,
+                            isRepsHighlighted && styles.buttonHighlighted
+                        ]}
+                    >
+                        {repsUnit}
+                    </Text>
                 </Pressable>
             </View>
             <View style={styles.itemContainer}>
@@ -60,12 +70,22 @@ const ExerciseItemPart = props => {
                     onChange={updateWeightValue}
                 />
                 <Pressable
-                    style={styles.unitButton}
+                    style={[
+                        styles.unitButton,
+                        isWeightHighlighted && styles.buttonHighlighted
+                    ]}
                     onPressIn={onPressInWeightHandler}
                     onPressOut={onPressOutWeightHandler}
                     onPress={updateWeightUnit}
                 >
-                    <Text style={styles.unit}>{weightUnit}</Text>
+                    <Text
+                        style={[
+                            styles.unit,
+                            isWeightHighlighted && styles.buttonHighlighted
+                        ]}
+                    >
+                        {weightUnit}
+                    </Text>
                 </Pressable>
             </View>
             <View style={styles.itemContainer}>
@@ -93,6 +113,7 @@ const styles = StyleSheet.create({
     subtitle: {},
     valueInput: {},
     unitButton: {},
+    buttonHighlighted: {},
     unit: {},
     deleteButton: {},
     deleteImage: {}

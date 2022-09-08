@@ -48,9 +48,13 @@ const ExerciseItem = props => {
 
     const [isHighlighted, setHighlighted] = useState(false)
 
-    const onPressInHandler = () => setHighlighted(false)
-    const onPressOutHandler = () => setHighlighted(true)
-    const onPressHandler = () => deleteExercise(id)
+    const onPressInDeleteHandler = () => setHighlighted(false)
+    const onPressOutDeleteHandler = () => setHighlighted(true)
+    const onPressDeleteHandler = () => deleteExercise(id)
+
+    const onPressInAddHandler = () => {}
+    const onPressOutAddHandler = () => {}
+    const onPressAddHandler = () => {}
 
     const updateWeightValue = updatePart(parts, setParts, (part, value) => ({
         ...part,
@@ -98,9 +102,9 @@ const ExerciseItem = props => {
     return (
         <View style={[styles.container, {height: 48 + 16 * parts.length}]}>
             <Pressable
-                onPressIn={onPressInHandler}
-                onPressOut={onPressOutHandler}
-                onPress={onPressHandler}
+                onPressIn={onPressInDeleteHandler}
+                onPressOut={onPressOutDeleteHandler}
+                onPress={onPressDeleteHandler}
                 style={styles.deleteButton}
             >
                 <Image
@@ -132,6 +136,12 @@ const ExerciseItem = props => {
                         updateWeightUnit={updateWeightUnit}
                     />
             )}
+            <View style={styles.addPartContainer}>
+                <Pressable style={styles.addPartButton} onPress={addPartHandler} onPressIn={onPressIn}>
+                    <Image style={styles.addPartImage} source={Images.ADD}/>
+                    <Text style={styles.addPartText}>Add super set</Text>
+                </Pressable>
+            </View>
         </View>
     )
 }
@@ -148,7 +158,20 @@ const styles = StyleSheet.create({
     deleteImage: {
         width: 32,
         height: 32
+    },
+    addPartContainer: {
+
+    },
+    addPartButton: {
+
+    },
+    addPartImage: {
+
+    },
+    addPartText: {
+
     }
+
 })
 
 export default ExerciseItem
