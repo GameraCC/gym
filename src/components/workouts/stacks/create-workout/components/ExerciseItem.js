@@ -1,6 +1,10 @@
 import {StyleSheet, View, Pressable} from 'react-native'
 
 import Images from '@assets/images'
+import {
+    VALID_EXERCISE_REP_UNITS,
+    VALID_EXERCISE_WEIGHT_UNITS
+} from '@lib/constraints'
 
 import ExerciseItemPart from './ExerciseItemPart'
 
@@ -17,7 +21,7 @@ import ExerciseItemPart from './ExerciseItemPart'
 
 /**
  * Updates a nested part by:
- * 
+ *
  * 1. Creating a new part array
  * 2. Extracting an individual part out of the part array
  * 3. Updating the part from a given updateExpression callback
@@ -28,10 +32,10 @@ import ExerciseItemPart from './ExerciseItemPart'
  * @param {string} value - A property value to update
  * @param {Function} callback - Update state callback, called with new reference of updated object
  * @param {Function} updateExpression
- * 
+ *
  * @returns {Function} A callback to update a part given an index and value
  */
-const updateNestedPart = (object, callback, updateExpression) = (index, value) => {
+const updatePart = (object, callback, updateExpression) => (index, value) => {
     const newParts = [...object]
 
     let part = object[index]
@@ -46,15 +50,31 @@ const updateNestedPart = (object, callback, updateExpression) = (index, value) =
 const ExerciseItem = props => {
     const {index, id, parts, setParts, deleteExercise} = props
 
-    const [isHighlighted, setHighlighted] = useState(false)
+    const [isDeleteHighlighted, setDeleteHighlighted] = useState(false)
+    const [isAddHighlighted, setAddHighlighted] = useState(false)
 
-    const onPressInDeleteHandler = () => setHighlighted(false)
-    const onPressOutDeleteHandler = () => setHighlighted(true)
+    const onPressInDeleteHandler = () => setDeleteHighlighted(false)
+    const onPressOutDeleteHandler = () => setDeleteHighlighted(true)
     const onPressDeleteHandler = () => deleteExercise(id)
 
-    const onPressInAddHandler = () => {}
-    const onPressOutAddHandler = () => {}
-    const onPressAddHandler = () => {}
+    const onPressInAddHandler = () => setAddHighlighted(true)
+    const onPressOutAddHandler = () => setAddHighlighted(false)
+    const onPressAddHandler = () => {
+        // Add new part to be rendered
+        const part = {
+            sets: 0,
+            reps: {
+                value: 0,
+                unit: VALID_EXERCISE_REP_UNITS[0] // Choose first valid unit as default
+            },
+            weight: {
+                value: 0,
+                unit: VALID_EXERCISE_WEIGHT_UNITS[0] // Choose first valid unit as default
+            }
+        }
+
+        setParts([...parts, part])
+    }
 
     const updateWeightValue = updatePart(parts, setParts, (part, value) => ({
         ...part,
@@ -117,11 +137,14 @@ const ExerciseItem = props => {
                 />
             </Pressable>
             {parts.map(
-                ({
-                    sets,
-                    reps: {repsValue, repsUnit},
-                    weight: {weightValue, weightUnit}
-                }, index) => 
+                (
+                    {
+                        sets,
+                        reps: {repsValue, repsUnit},
+                        weight: {weightValue, weightUnit}
+                    },
+                    index
+                ) => (
                     <ExerciseItemPart
                         deletePart={() => deletePart(index)}
                         sets={sets}
@@ -135,11 +158,33 @@ const ExerciseItem = props => {
                         updateWeightValue={updateWeightValue}
                         updateWeightUnit={updateWeightUnit}
                     />
+                )
             )}
             <View style={styles.addPartContainer}>
-                <Pressable style={styles.addPartButton} onPress={addPartHandler} onPressIn={onPressIn}>
-                    <Image style={styles.addPartImage} source={Images.ADD}/>
-                    <Text style={styles.addPartText}>Add super set</Text>
+                <Pressable
+                    style={[
+                        styles.addPartButton,
+                        isAddHighlighted && styles.addHighlighted
+                    ]}
+                    onPress={onPressAddHandler}
+                    onPressIn={onPressInAddHandler}
+                    onPressOut={onPressOutAddHandler}
+                >
+                    <Image
+                        style={[
+                            styles.addPartImage,
+                            isAddHighlighted && styles.addHighlighted
+                        ]}
+                        source={Images.ADD}
+                    />
+                    <Text
+                        style={[
+                            styles.addPartText,
+                            isAddHighlighted && styles.addHighlighted
+                        ]}
+                    >
+                        Add super set
+                    </Text>
                 </Pressable>
             </View>
         </View>
@@ -159,19 +204,11 @@ const styles = StyleSheet.create({
         width: 32,
         height: 32
     },
-    addPartContainer: {
-
-    },
-    addPartButton: {
-
-    },
-    addPartImage: {
-
-    },
-    addPartText: {
-
-    }
-
+    addPartContainer: {},
+    addPartButton: {},
+    addPartImage: {},
+    addPartText: {},
+    addHighlighted: {}
 })
 
 export default ExerciseItem

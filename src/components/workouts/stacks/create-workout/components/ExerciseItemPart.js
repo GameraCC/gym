@@ -1,6 +1,10 @@
 import {StyleSheet, View} from 'react-native'
 
 import Images from '@assets/images'
+import {
+    VALID_EXERCISE_REP_UNITS,
+    VALID_EXERCISE_WEIGHT_UNITS
+} from '@lib/constraints'
 
 const ExerciseItemPart = props => {
     const {
@@ -22,9 +26,33 @@ const ExerciseItemPart = props => {
 
     const onPressInRepsHandler = () => setRepsHighlighted(true)
     const onPressOutRepsHandler = () => setRepsHighlighted(false)
+    const onPressRepsHandler = () => {
+        // Rotate between rep units, default unit is first unit in array, assigned by the parent component upon adding a part
+        const index = VALID_EXERCISE_REP_UNITS.findIndex(
+            unit => unit === repsUnit
+        )
+        const unit =
+            VALID_EXERCISE_REP_UNITS.length === index + 1
+                ? VALID_EXERCISE_REP_UNITS[0]
+                : VALID_EXERCISE_REP_UNITS[index]
+
+        updateRepsUnit(unit)
+    }
 
     const onPressInWeightHandler = () => setWeightHighlighted(true)
     const onPressOutWeightHandler = () => setWeightHighlighted(false)
+    const onPressWeightHandler = () => {
+        // Rotate between rep units, default unit is first unit in array, assigned by the parent component upon adding a part
+        const index = VALID_EXERCISE_WEIGHT_UNITS.findIndex(
+            unit => unit === weightUnit
+        )
+        const unit =
+            VALID_EXERCISE_WEIGHT_UNITS.length === index + 1
+                ? VALID_EXERCISE_WEIGHT_UNITS[0]
+                : VALID_EXERCISE_WEIGHT_UNITS[index]
+
+        updateWeightUnit(unit)
+    }
 
     return (
         <View style={styles.container}>
@@ -33,7 +61,11 @@ const ExerciseItemPart = props => {
                 <TextInput
                     style={styles.valueInput}
                     value={sets}
-                    onChange={updateSets}
+                    onChangeText={updateSets}
+                    numberOfLines={1}
+                    keyboardDismissMode="on-drag"
+                    keyboardShouldPersistTaps="always"
+                    keyboard="numeric"
                 />
             </View>
             <View style={styles.itemContainer}>
@@ -42,6 +74,10 @@ const ExerciseItemPart = props => {
                     style={styles.valueInput}
                     value={repsValue}
                     onChange={updateRepsValue}
+                    numberOfLines={1}
+                    keyboardDismissMode="on-drag"
+                    keyboardShouldPersistTaps="always"
+                    keyboard="numeric"
                 />
                 <Pressable
                     style={[
@@ -50,7 +86,7 @@ const ExerciseItemPart = props => {
                     ]}
                     onPressIn={onPressInRepsHandler}
                     onPressOut={onPressOutRepsHandler}
-                    onPress={updateRepsUnit}
+                    onPress={onPressRepsHandler}
                 >
                     <Text
                         style={[
@@ -68,6 +104,10 @@ const ExerciseItemPart = props => {
                     style={styles.valueInput}
                     value={weightValue}
                     onChange={updateWeightValue}
+                    numberOfLines={1}
+                    keyboardDismissMode="on-drag"
+                    keyboardShouldPersistTaps="always"
+                    keyboard="numeric"
                 />
                 <Pressable
                     style={[
@@ -76,7 +116,7 @@ const ExerciseItemPart = props => {
                     ]}
                     onPressIn={onPressInWeightHandler}
                     onPressOut={onPressOutWeightHandler}
-                    onPress={updateWeightUnit}
+                    onPress={onPressWeightHandler}
                 >
                     <Text
                         style={[

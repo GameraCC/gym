@@ -14,13 +14,12 @@ const Tip = props => {
 
 const styles = StyleSheet.create({
     container: {
-        marginLeft: 24,
-        marginRight: 24
+        width: '100%'
     },
     tip: {
-        fontFamily: 'Lora-Regular',
+        fontFamily: 'Helvetica',
         fontSize: 14,
-        textAlign: 'center'
+        textAlign: 'left'
     }
 })
 

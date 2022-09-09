@@ -87,12 +87,12 @@ const styles = StyleSheet.create({
     },
     addExerciseButton: {
         position: 'absolute',
-        right: 20
+        right: 0
     },
     addExerciseImage: {
         resizeMode: 'contain',
-        width: 28,
-        height: 28
+        width: 56,
+        height: 56
     }
 })
 

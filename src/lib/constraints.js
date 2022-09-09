@@ -1,3 +1,5 @@
+import EXERCISES from '@assets/static'
+
 const MAX_PASSWORD_LENGTH = 100
 const MIN_PASSWORD_LENGTH = 8
 const MAX_USERNAME_LENGTH = 24
@@ -6,6 +8,8 @@ const EMAIL_VALIDATION_REGEX =
     /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
 const USERNAME_VALIDATION_REGEX =
     /^([a-z0-9_](?:(?:[a-z0-9_]|(?:\.(?!\.))){0,28}(?:[a-z0-9_]))?)$/
+const VALID_EXERCISE_WEIGHT_UNITS = ['lbs', 'kg'] // First unit is default shown upon adding set
+const VALID_EXERCISE_REP_UNITS = ['sets', 'reps', 'secs', 'AMRAP'] // First unit is default shown upon adding set
 
 /**
  * Methods to apply constraints on inputs
@@ -77,10 +81,57 @@ const lastNameConstraint = last_name => {
     return true
 }
 
-module.exports = {
+/**
+ * Workout
+ *
+ * Constraints:
+ *  - Name must be less than 128 characters
+ *  - Description must be less than 256 characters
+ *  - Id must exist
+ *  - Must include 1 part
+ *  - Must have less than 16 parts
+ *  - Parts set unit must be a valid unit
+ *  - Parts set value must be greater than 1, less than 1000
+ *  - Parts rep unit must be a valid unit
+ *  - Parts reps value must be between 0-10000
+ */
+const workoutConstraint = workout => {
+    if (workout.name.length > 128)
+        return 'Name must be less than 128 characters'
+    if (workout.description.length > 256)
+        return 'Description must be less than 256 characters'
+
+    for (const exercise of workout.exercises) {
+        if (!EXERCISES[exercise.id]) return 'Invalid exercise identifier'
+        if (!exercise?.parts?.length)
+            return 'Exercise must include atleast 1 part'
+        if (exercise.parts.length > 16)
+            return 'Exercise must have less than 16 parts'
+
+        for (const part of exercise.parts) {
+            if (!part.sets || part.sets > 1000)
+                return 'Exercise sets must be between 1-1000'
+            if (!part?.reps?.value || part?.reps?.value > 1000)
+                return 'Exercise reps must be between 1-1000'
+            if (!VALID_EXERCISE_REP_UNITS.includes(part?.reps?.unit))
+                return 'Invalid exercise reps unit'
+            if (part?.weight?.value < 0 || part?.weight?.value > 10000)
+                return 'Exercise weight must be between 0-10000'
+            if (!VALID_EXERCISE_WEIGHT_UNITS.includes(part?.weight?.unit))
+                return 'Invalid exercise weight unit'
+        }
+    }
+
+    return true
+}
+
+export {
     passwordConstraint,
     emailConstraint,
     usernameConstraint,
     firstNameConstraint,
-    lastNameConstraint
+    lastNameConstraint,
+    workoutConstraint,
+    VALID_EXERCISE_REP_UNITS,
+    VALID_EXERCISE_WEIGHT_UNITS
 }

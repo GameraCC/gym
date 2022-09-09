@@ -15,20 +15,20 @@ const Instruction = props => {
 
 const styles = StyleSheet.create({
     instructionTextContainer: {
-        marginTop: 4,
+        marginTop: 1,
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-start',
         alignItems: 'center'
     },
     instructionIndex: {
-        fontFamily: 'Lora-Bold',
-        fontSize: 16
+        fontFamily: 'Helvetica',
+        fontSize: 14
     },
     instructionValue: {
-        fontFamily: 'Lora-Regular',
-        marginLeft: 16,
-        width: '100%',
+        fontFamily: 'Helvetica',
+        marginLeft: 24,
+        marginRight: 24,
         textAlign: 'left',
         fontSize: 14
     }
