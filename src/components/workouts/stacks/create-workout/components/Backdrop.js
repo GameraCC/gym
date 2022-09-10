@@ -12,9 +12,9 @@ import {useNavigation} from '@react-navigation/native'
 import Constants from 'expo-constants'
 
 import CreateWorkoutHeader from './CreateWorkoutHeader'
+import ExerciseItem from './ExerciseItem'
 
 import {gray, white, black} from '@assets/colors'
-import ExerciseItem from './ExerciseItem'
 import {
     VALID_EXERCISE_WEIGHT_UNITS,
     VALID_EXERCISE_REP_UNITS

@@ -2,12 +2,13 @@ import {useState} from 'react'
 import {StyleSheet, View, Pressable, Image, Text} from 'react-native'
 
 import Images from '@assets/images'
+import ExerciseItemPart from './ExerciseItemPart'
+
+import {EXERCISES} from '@assets/static'
 import {
     VALID_EXERCISE_REP_UNITS,
     VALID_EXERCISE_WEIGHT_UNITS
 } from '@lib/constraints'
-
-import ExerciseItemPart from './ExerciseItemPart'
 
 /**
  * Updates a part
@@ -124,6 +125,8 @@ const ExerciseItem = props => {
 
     return (
         <View style={[styles.container, {height: 48 + 16 * parts.length}]}>
+            <Image style={styles.exerciseImage} source={Images[id]} />
+            <Text style={styles.exerciseName}>{EXERCISES[id].name}</Text>
             <Pressable
                 onPressIn={onPressInDeleteHandler}
                 onPressOut={onPressOutDeleteHandler}
@@ -139,61 +142,69 @@ const ExerciseItem = props => {
                     }
                 />
             </Pressable>
-            {parts.map(
-                (
-                    {
-                        sets,
-                        reps: {value: repsValue, unit: repsUnit},
-                        weight: {value: weightValue, unit: weightUnit}
-                    },
-                    index
-                ) => (
-                    <ExerciseItemPart
-                        key={index}
-                        deletePart={() => deletePart(index)}
-                        sets={sets}
-                        repsValue={repsValue}
-                        repsUnit={repsUnit}
-                        weightValue={weightValue}
-                        weightUnit={weightUnit}
-                        updateSets={updateSets}
-                        updateRepsValue={value => updateRepsValue(index, value)}
-                        updateRepsUnit={value => updateRepsUnit(index, value)}
-                        updateWeightValue={value =>
-                            updateWeightValue(index, value)
-                        }
-                        updateWeightUnit={value =>
-                            updateWeightUnit(index, value)
-                        }
-                    />
-                )
-            )}
+            <View style={styles.partsContainer}>
+                {parts.map(
+                    (
+                        {
+                            sets,
+                            reps: {value: repsValue, unit: repsUnit},
+                            weight: {value: weightValue, unit: weightUnit}
+                        },
+                        index
+                    ) => (
+                        <ExerciseItemPart
+                            key={index}
+                            deletePart={() => deletePart(index)}
+                            sets={sets}
+                            repsValue={repsValue}
+                            repsUnit={repsUnit}
+                            weightValue={weightValue}
+                            weightUnit={weightUnit}
+                            updateSets={updateSets}
+                            updateRepsValue={value =>
+                                updateRepsValue(index, value)
+                            }
+                            updateRepsUnit={value =>
+                                updateRepsUnit(index, value)
+                            }
+                            updateWeightValue={value =>
+                                updateWeightValue(index, value)
+                            }
+                            updateWeightUnit={value =>
+                                updateWeightUnit(index, value)
+                            }
+                        />
+                    )
+                )}
+            </View>
             <View style={styles.addPartContainer}>
-                <Pressable
-                    style={[
-                        styles.addPartButton,
-                        isAddHighlighted && styles.addHighlighted
-                    ]}
-                    onPress={onPressAddHandler}
-                    onPressIn={onPressInAddHandler}
-                    onPressOut={onPressOutAddHandler}
-                >
-                    <Image
+                {parts.length < 16 && (
+                    <Pressable
                         style={[
-                            styles.addPartImage,
+                            styles.addPartButton,
                             isAddHighlighted && styles.addHighlighted
                         ]}
-                        source={Images.ADD}
-                    />
-                    <Text
-                        style={[
-                            styles.addPartText,
-                            isAddHighlighted && styles.addHighlighted
-                        ]}
+                        onPress={onPressAddHandler}
+                        onPressIn={onPressInAddHandler}
+                        onPressOut={onPressOutAddHandler}
                     >
-                        Add super set
-                    </Text>
-                </Pressable>
+                        <Image
+                            style={[
+                                styles.addPartImage,
+                                isAddHighlighted && styles.addHighlighted
+                            ]}
+                            source={Images.ADD}
+                        />
+                        <Text
+                            style={[
+                                styles.addPartText,
+                                isAddHighlighted && styles.addHighlighted
+                            ]}
+                        >
+                            Add super set
+                        </Text>
+                    </Pressable>
+                )}
             </View>
         </View>
     )
@@ -204,6 +215,8 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 48 // 16 DIPs added for each part
     },
+    exerciseImage: {},
+    exerciseName: {},
     deleteButton: {
         width: 48,
         height: 24
@@ -212,6 +225,7 @@ const styles = StyleSheet.create({
         width: 32,
         height: 32
     },
+    partsContainer: {},
     addPartContainer: {},
     addPartButton: {},
     addPartImage: {},
