@@ -91,8 +91,8 @@ const styles = StyleSheet.create({
     },
     addExerciseImage: {
         resizeMode: 'contain',
-        width: 56,
-        height: 56
+        width: 40,
+        height: 40
     }
 })
 

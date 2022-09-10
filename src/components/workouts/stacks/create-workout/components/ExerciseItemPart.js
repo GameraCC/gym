@@ -1,4 +1,5 @@
-import {StyleSheet, View} from 'react-native'
+import {useState} from 'react'
+import {StyleSheet, View, Pressable, Image, TextInput, Text} from 'react-native'
 
 import Images from '@assets/images'
 import {
@@ -21,8 +22,12 @@ const ExerciseItemPart = props => {
         deletePart
     } = props
 
+    const [isDeleteHighlighted, setDeleteHighlighted] = useState(false)
     const [isRepsHighlighted, setRepsHighlighted] = useState(false)
     const [isWeightHighlighted, setWeightHighlighted] = useState(false)
+
+    const onPressInDeleteHandler = () => setDeleteHighlighted(false)
+    const onPressOutDeleteHandler = () => setDeleteHighlighted(true)
 
     const onPressInRepsHandler = () => setRepsHighlighted(true)
     const onPressOutRepsHandler = () => setRepsHighlighted(false)
@@ -65,7 +70,7 @@ const ExerciseItemPart = props => {
                     numberOfLines={1}
                     keyboardDismissMode="on-drag"
                     keyboardShouldPersistTaps="always"
-                    keyboard="numeric"
+                    keyboardType="numeric"
                 />
             </View>
             <View style={styles.itemContainer}>
@@ -73,11 +78,11 @@ const ExerciseItemPart = props => {
                 <TextInput
                     style={styles.valueInput}
                     value={repsValue}
-                    onChange={updateRepsValue}
+                    onChangeText={updateRepsValue}
                     numberOfLines={1}
                     keyboardDismissMode="on-drag"
                     keyboardShouldPersistTaps="always"
-                    keyboard="numeric"
+                    keyboardType="numeric"
                 />
                 <Pressable
                     style={[
@@ -103,7 +108,7 @@ const ExerciseItemPart = props => {
                 <TextInput
                     style={styles.valueInput}
                     value={weightValue}
-                    onChange={updateWeightValue}
+                    onChangeText={updateWeightValue}
                     numberOfLines={1}
                     keyboardDismissMode="on-drag"
                     keyboardShouldPersistTaps="always"
@@ -129,11 +134,16 @@ const ExerciseItemPart = props => {
                 </Pressable>
             </View>
             <View style={styles.itemContainer}>
-                <Pressable style={styles.deleteButton} onPress={deletePart}>
+                <Pressable
+                    style={styles.deleteButton}
+                    onPress={deletePart}
+                    onPressIn={onPressInDeleteHandler}
+                    onPressOut={onPressOutDeleteHandler}
+                >
                     <Image
                         style={styles.deleteImage}
                         source={
-                            deleteHighlighted
+                            isDeleteHighlighted
                                 ? Images.REMOVE_CROSS_HIGHLIGHTED
                                 : Images.REMOVE_CROSS
                         }

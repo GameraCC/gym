@@ -1,4 +1,5 @@
-import {StyleSheet, View, Pressable} from 'react-native'
+import {useState} from 'react'
+import {StyleSheet, View, Pressable, Image, Text} from 'react-native'
 
 import Images from '@assets/images'
 import {
@@ -48,7 +49,7 @@ const updatePart = (object, callback, updateExpression) => (index, value) => {
 }
 
 const ExerciseItem = props => {
-    const {index, id, parts, setParts, deleteExercise} = props
+    const {id, parts, setParts, deleteExercise} = props
 
     const [isDeleteHighlighted, setDeleteHighlighted] = useState(false)
     const [isAddHighlighted, setAddHighlighted] = useState(false)
@@ -62,13 +63,13 @@ const ExerciseItem = props => {
     const onPressAddHandler = () => {
         // Add new part to be rendered
         const part = {
-            sets: 0,
+            sets: '0',
             reps: {
-                value: 0,
+                value: '0',
                 unit: VALID_EXERCISE_REP_UNITS[0] // Choose first valid unit as default
             },
             weight: {
-                value: 0,
+                value: '0',
                 unit: VALID_EXERCISE_WEIGHT_UNITS[0] // Choose first valid unit as default
             }
         }
@@ -100,13 +101,15 @@ const ExerciseItem = props => {
         }
     }))
 
-    const updateRepsValue = updatePart(parts, setParts, (part, value) => ({
-        ...part,
-        reps: {
-            ...part.reps,
-            value
+    const updateRepsValue = updatePart(parts, setParts, (part, value) => {
+        return {
+            ...part,
+            reps: {
+                ...part.reps,
+                value
+            }
         }
-    }))
+    })
 
     const updateSets = updatePart(parts, setParts, (part, sets) => ({
         ...part,
@@ -130,7 +133,7 @@ const ExerciseItem = props => {
                 <Image
                     style={styles.deleteImage}
                     source={
-                        isHighlighted
+                        isDeleteHighlighted
                             ? Images.DELETE_HIGHLGIHTED
                             : Images.DELETE
                     }
@@ -140,12 +143,13 @@ const ExerciseItem = props => {
                 (
                     {
                         sets,
-                        reps: {repsValue, repsUnit},
-                        weight: {weightValue, weightUnit}
+                        reps: {value: repsValue, unit: repsUnit},
+                        weight: {value: weightValue, unit: weightUnit}
                     },
                     index
                 ) => (
                     <ExerciseItemPart
+                        key={index}
                         deletePart={() => deletePart(index)}
                         sets={sets}
                         repsValue={repsValue}
@@ -153,10 +157,14 @@ const ExerciseItem = props => {
                         weightValue={weightValue}
                         weightUnit={weightUnit}
                         updateSets={updateSets}
-                        updateRepsValue={updateRepsValue}
-                        updateRepsUnit={updateRepsUnit}
-                        updateWeightValue={updateWeightValue}
-                        updateWeightUnit={updateWeightUnit}
+                        updateRepsValue={value => updateRepsValue(index, value)}
+                        updateRepsUnit={value => updateRepsUnit(index, value)}
+                        updateWeightValue={value =>
+                            updateWeightValue(index, value)
+                        }
+                        updateWeightUnit={value =>
+                            updateWeightUnit(index, value)
+                        }
                     />
                 )
             )}

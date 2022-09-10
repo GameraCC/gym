@@ -15,6 +15,10 @@ import CreateWorkoutHeader from './CreateWorkoutHeader'
 
 import {gray, white, black} from '@assets/colors'
 import ExerciseItem from './ExerciseItem'
+import {
+    VALID_EXERCISE_WEIGHT_UNITS,
+    VALID_EXERCISE_REP_UNITS
+} from '@lib/constraints'
 
 // The backdrop, which is everything except the bottomsheet, must be passed to the bottomsheet as the backdropComponent prop
 const Backdrop = props => {
@@ -24,12 +28,13 @@ const Backdrop = props => {
     const isAddExerciseRendered = useRef(false)
 
     // Id of exercise to be added, stored in global redux to avoid passing callbacks between components & wrapping screens in contexts
-    const exerciseId = useSelector(state => state.updates.exercise.id)
+    const exercise = useSelector(state => state.updates.exercise)
 
     const bottomSheetRef = useBottomSheet()
     const navigation = useNavigation()
 
     const onSave = useCallback(({title, description}) => {
+        // parse stringified numbers for textinputs into numbers
         // validate constraints on inputs
         // send on save request
         console.log('saved')
@@ -40,10 +45,28 @@ const Backdrop = props => {
         // Don't run on first mount
         if (!isAddExerciseRendered.current) isAddExerciseRendered.current = true
         else {
-            console.log('added exericse:', exerciseId)
-            setSelectedExercises('')
+            // Add the added exercise to the list of exercises
+            setSelectedExercises([
+                ...selectedExercises,
+                {
+                    id: exercise.id,
+                    parts: [
+                        {
+                            sets: '0',
+                            reps: {
+                                value: '0',
+                                unit: VALID_EXERCISE_REP_UNITS[0]
+                            },
+                            weight: {
+                                value: '0',
+                                unit: VALID_EXERCISE_WEIGHT_UNITS[0]
+                            }
+                        }
+                    ]
+                }
+            ])
         }
-    }, [exerciseId])
+    }, [exercise])
 
     const opacity = useAnimatedStyle(() => {
         const style = {
@@ -73,16 +96,17 @@ const Backdrop = props => {
     const handleOpacityPress = () => bottomSheetRef.collapse()
 
     const setParts = useCallback(
-        (parts, index) => {
+        (index, parts) => {
             // Create new reference to trigger re-render
             const newExercises = [...selectedExercises]
 
             // Find the exercise and update it's parts
-            const exercise = selectedExercises[index]
-            exercise.parts = parts
+            const foundExercise = selectedExercises[index]
+
+            foundExercise.parts = parts
 
             // Update the exercise while maintaining its position in the array
-            newExercises.splice(i, 1, exercise)
+            newExercises.splice(index, 1, foundExercise)
 
             // Dispatch re-render
             setSelectedExercises(newExercises)
@@ -117,7 +141,7 @@ const Backdrop = props => {
                         index={index}
                         id={id}
                         parts={parts}
-                        setParts={setParts}
+                        setParts={parts => setParts(index, parts)}
                         deleteExercise={deleteExercise}
                     />
                 ))}
