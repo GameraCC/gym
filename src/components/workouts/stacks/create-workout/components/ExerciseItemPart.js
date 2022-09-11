@@ -6,6 +6,8 @@ import {
     VALID_EXERCISE_REP_UNITS,
     VALID_EXERCISE_WEIGHT_UNITS
 } from '@lib/constraints'
+import {gray} from '@assets/colors'
+import {black, white} from '@assets/colors'
 
 const ExerciseItemPart = props => {
     const {
@@ -39,7 +41,7 @@ const ExerciseItemPart = props => {
         const unit =
             VALID_EXERCISE_REP_UNITS.length === index + 1
                 ? VALID_EXERCISE_REP_UNITS[0]
-                : VALID_EXERCISE_REP_UNITS[index]
+                : VALID_EXERCISE_REP_UNITS[index + 1]
 
         updateRepsUnit(unit)
     }
@@ -54,17 +56,16 @@ const ExerciseItemPart = props => {
         const unit =
             VALID_EXERCISE_WEIGHT_UNITS.length === index + 1
                 ? VALID_EXERCISE_WEIGHT_UNITS[0]
-                : VALID_EXERCISE_WEIGHT_UNITS[index]
+                : VALID_EXERCISE_WEIGHT_UNITS[index + 1]
 
         updateWeightUnit(unit)
     }
 
     return (
         <View style={styles.container}>
-            <View style={styles.itemContainer}>
-                <Text style={styles.subtitle}>Sets</Text>
+            <View style={[styles.itemContainer, styles.borderContainer]}>
                 <TextInput
-                    style={styles.valueInput}
+                    style={styles.setInput}
                     value={sets}
                     onChangeText={updateSets}
                     numberOfLines={1}
@@ -73,65 +74,67 @@ const ExerciseItemPart = props => {
                     keyboardType="numeric"
                 />
             </View>
-            <View style={styles.itemContainer}>
-                <Text style={styles.subtitle}>Reps</Text>
-                <TextInput
-                    style={styles.valueInput}
-                    value={repsValue}
-                    onChangeText={updateRepsValue}
-                    numberOfLines={1}
-                    keyboardDismissMode="on-drag"
-                    keyboardShouldPersistTaps="always"
-                    keyboardType="numeric"
-                />
-                <Pressable
-                    style={[
-                        styles.unitButton,
-                        isRepsHighlighted && styles.buttonHighlighted
-                    ]}
-                    onPressIn={onPressInRepsHandler}
-                    onPressOut={onPressOutRepsHandler}
-                    onPress={onPressRepsHandler}
-                >
-                    <Text
+            <View style={[styles.itemContainer, styles.borderContainer]}>
+                <View style={styles.unitValueContainer}>
+                    <TextInput
+                        style={styles.valueInput}
+                        value={repsValue}
+                        onChangeText={updateRepsValue}
+                        numberOfLines={1}
+                        keyboardDismissMode="on-drag"
+                        keyboardShouldPersistTaps="always"
+                        keyboardType="numeric"
+                    />
+                    <Pressable
                         style={[
-                            styles.unit,
+                            styles.unitButton,
                             isRepsHighlighted && styles.buttonHighlighted
                         ]}
+                        onPressIn={onPressInRepsHandler}
+                        onPressOut={onPressOutRepsHandler}
+                        onPress={onPressRepsHandler}
                     >
-                        {repsUnit}
-                    </Text>
-                </Pressable>
+                        <Text
+                            style={[
+                                styles.unit,
+                                isRepsHighlighted && styles.buttonHighlighted
+                            ]}
+                        >
+                            {repsUnit}
+                        </Text>
+                    </Pressable>
+                </View>
             </View>
-            <View style={styles.itemContainer}>
-                <Text style={styles.subtitle}>Weight</Text>
-                <TextInput
-                    style={styles.valueInput}
-                    value={weightValue}
-                    onChangeText={updateWeightValue}
-                    numberOfLines={1}
-                    keyboardDismissMode="on-drag"
-                    keyboardShouldPersistTaps="always"
-                    keyboard="numeric"
-                />
-                <Pressable
-                    style={[
-                        styles.unitButton,
-                        isWeightHighlighted && styles.buttonHighlighted
-                    ]}
-                    onPressIn={onPressInWeightHandler}
-                    onPressOut={onPressOutWeightHandler}
-                    onPress={onPressWeightHandler}
-                >
-                    <Text
+            <View style={[styles.itemContainer, styles.borderContainer]}>
+                <View style={styles.unitValueContainer}>
+                    <TextInput
+                        style={styles.valueInput}
+                        value={weightValue}
+                        onChangeText={updateWeightValue}
+                        numberOfLines={1}
+                        keyboardDismissMode="on-drag"
+                        keyboardShouldPersistTaps="always"
+                        keyboard="numeric"
+                    />
+                    <Pressable
                         style={[
-                            styles.unit,
+                            styles.unitButton,
                             isWeightHighlighted && styles.buttonHighlighted
                         ]}
+                        onPressIn={onPressInWeightHandler}
+                        onPressOut={onPressOutWeightHandler}
+                        onPress={onPressWeightHandler}
                     >
-                        {weightUnit}
-                    </Text>
-                </Pressable>
+                        <Text
+                            style={[
+                                styles.unit,
+                                isWeightHighlighted && styles.buttonHighlighted
+                            ]}
+                        >
+                            {weightUnit}
+                        </Text>
+                    </Pressable>
+                </View>
             </View>
             <View style={styles.itemContainer}>
                 <Pressable
@@ -157,16 +160,74 @@ const ExerciseItemPart = props => {
 const styles = StyleSheet.create({
     container: {
         width: '100%',
-        height: '100%'
+        height: 48,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center'
     },
-    itemContainer: {},
-    subtitle: {},
-    valueInput: {},
-    unitButton: {},
-    buttonHighlighted: {},
-    unit: {},
-    deleteButton: {},
-    deleteImage: {}
+    borderContainer: {
+        borderColor: black,
+        borderWidth: 1,
+        borderRadius: 4
+    },
+    itemContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    unitValueContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    },
+    index: {
+        fontFamily: 'Helvetica-Bold',
+        fontSize: 16
+    },
+    setInput: {
+        width: 32,
+        padding: 8,
+        textAlign: 'center',
+        fontSize: 14,
+        fontFamily: 'Helvetica'
+    },
+    valueInput: {
+        width: 48,
+        padding: 8,
+        textAlign: 'center',
+        fontSize: 14,
+        fontFamily: 'Helvetica'
+    },
+    unitButton: {
+        width: 52,
+        height: '100%',
+        paddingLeft: 4,
+        paddingRight: 4,
+        paddingTop: 8,
+        paddingBottom: 8,
+        backgroundColor: black
+    },
+    buttonHighlighted: {
+        backgroundColor: gray,
+        color: white
+    },
+    unit: {
+        fontSize: 12,
+        textAlign: 'center',
+        color: white,
+        fontFamily: 'Helvetica'
+    },
+    deleteButton: {
+        width: 32,
+        height: 32
+    },
+    deleteImage: {
+        width: 32,
+        height: 32
+    }
 })
 
 export default ExerciseItemPart

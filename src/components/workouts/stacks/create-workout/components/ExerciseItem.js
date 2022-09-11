@@ -1,14 +1,16 @@
 import {useState} from 'react'
-import {StyleSheet, View, Pressable, Image, Text} from 'react-native'
+import {StyleSheet, View, Pressable, Image, Text, TextInput} from 'react-native'
 
 import Images from '@assets/images'
 import ExerciseItemPart from './ExerciseItemPart'
 
 import {EXERCISES} from '@assets/static'
+import {white, black, gray} from '@assets/colors'
 import {
     VALID_EXERCISE_REP_UNITS,
     VALID_EXERCISE_WEIGHT_UNITS
 } from '@lib/constraints'
+import {TouchableOpacity} from 'react-native-gesture-handler'
 
 /**
  * Updates a part
@@ -50,7 +52,7 @@ const updatePart = (object, callback, updateExpression) => (index, value) => {
 }
 
 const ExerciseItem = props => {
-    const {id, parts, setParts, deleteExercise} = props
+    const {id, parts, setParts, deleteExercise, note, setNote} = props
 
     const [isDeleteHighlighted, setDeleteHighlighted] = useState(false)
     const [isAddHighlighted, setAddHighlighted] = useState(false)
@@ -118,31 +120,37 @@ const ExerciseItem = props => {
     }))
 
     const deletePart = index => {
-        const newParts = [...object]
+        const newParts = [...parts]
         newParts.splice(index, 1)
         setParts(newParts)
     }
 
     return (
-        <View style={[styles.container, {height: 48 + 16 * parts.length}]}>
-            <Image style={styles.exerciseImage} source={Images[id]} />
-            <Text style={styles.exerciseName}>{EXERCISES[id].name}</Text>
-            <Pressable
-                onPressIn={onPressInDeleteHandler}
-                onPressOut={onPressOutDeleteHandler}
-                onPress={onPressDeleteHandler}
-                style={styles.deleteButton}
+        <View style={[styles.container]}>
+            <View style={styles.headerContainer}>
+                <Image style={styles.exerciseImage} source={Images[id]} />
+                <Text style={styles.exerciseName} numberOfLines={1}>
+                    {EXERCISES[id].name}
+                </Text>
+                <Pressable
+                    onPressIn={onPressInDeleteHandler}
+                    onPressOut={onPressOutDeleteHandler}
+                    onPress={onPressDeleteHandler}
+                    style={styles.deleteButton}
+                >
+                    <Image
+                        style={styles.deleteImage}
+                        source={
+                            isDeleteHighlighted
+                                ? Images.DELETE_HIGHLGIHTED
+                                : Images.DELETE
+                        }
+                    />
+                </Pressable>
+            </View>
+            <View
+                style={[styles.partsContainer, {height: 48 * parts.length + 1}]}
             >
-                <Image
-                    style={styles.deleteImage}
-                    source={
-                        isDeleteHighlighted
-                            ? Images.DELETE_HIGHLGIHTED
-                            : Images.DELETE
-                    }
-                />
-            </Pressable>
-            <View style={styles.partsContainer}>
                 {parts.map(
                     (
                         {
@@ -177,34 +185,50 @@ const ExerciseItem = props => {
                     )
                 )}
             </View>
-            <View style={styles.addPartContainer}>
-                {parts.length < 16 && (
-                    <Pressable
-                        style={[
-                            styles.addPartButton,
-                            isAddHighlighted && styles.addHighlighted
-                        ]}
-                        onPress={onPressAddHandler}
-                        onPressIn={onPressInAddHandler}
-                        onPressOut={onPressOutAddHandler}
-                    >
-                        <Image
+            <View style={styles.footerContainer}>
+                <View style={styles.noteContainer}>
+                    <Text style={styles.noteTitle}>Note</Text>
+                    <TextInput
+                        style={styles.notesInput}
+                        keyboardType="default"
+                        placeholder="Add a note"
+                        onChangeText={setNote}
+                        value={note}
+                        autoCapitalize="none"
+                        multiline={false}
+                        numberOfLines={1}
+                        maxLength={32}
+                    />
+                </View>
+                <View style={styles.addPartContainer}>
+                    {parts.length < 16 && (
+                        <TouchableOpacity
                             style={[
-                                styles.addPartImage,
+                                styles.addPartButton,
                                 isAddHighlighted && styles.addHighlighted
                             ]}
-                            source={Images.ADD}
-                        />
-                        <Text
-                            style={[
-                                styles.addPartText,
-                                isAddHighlighted && styles.addHighlighted
-                            ]}
+                            onPress={onPressAddHandler}
+                            onPressIn={onPressInAddHandler}
+                            onPressOut={onPressOutAddHandler}
                         >
-                            Add super set
-                        </Text>
-                    </Pressable>
-                )}
+                            <Image
+                                style={[
+                                    styles.addPartImage,
+                                    isAddHighlighted && styles.addHighlighted
+                                ]}
+                                source={Images.ADD_GRAY}
+                            />
+                            <Text
+                                style={[
+                                    styles.addPartText,
+                                    isAddHighlighted && styles.addHighlighted
+                                ]}
+                            >
+                                Add super set
+                            </Text>
+                        </TouchableOpacity>
+                    )}
+                </View>
             </View>
         </View>
     )
@@ -212,25 +236,90 @@ const ExerciseItem = props => {
 
 const styles = StyleSheet.create({
     container: {
-        width: '100%',
-        height: 48 // 16 DIPs added for each part
+        overflow: 'hidden',
+        backgroundColor: white,
+        borderTopWidth: 0.75,
+        borderBottomWidth: 0.75,
+        borderColor: black
     },
-    exerciseImage: {},
-    exerciseName: {},
+    headerContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        marginTop: 16,
+        marginBottom: 4
+    },
+    exerciseImage: {
+        width: 40,
+        height: 40,
+        resizeMode: 'contain'
+    },
+    exerciseName: {
+        textAlign: 'center',
+        fontSize: 20,
+        fontFamily: 'Helvetica'
+    },
     deleteButton: {
-        width: 48,
+        width: 24,
         height: 24
     },
     deleteImage: {
-        width: 32,
-        height: 32
+        width: 24,
+        height: 24
     },
-    partsContainer: {},
+    partsContainer: {
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'flex-start'
+    },
+    footerContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        height: 48
+    },
     addPartContainer: {},
-    addPartButton: {},
-    addPartImage: {},
-    addPartText: {},
-    addHighlighted: {}
+    addPartButton: {
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    addPartImage: {
+        width: 24,
+        height: 24
+    },
+    addPartText: {
+        marginLeft: 4,
+        color: gray,
+        fontFamily: 'Helvetica',
+        fontSize: 14
+    },
+    addHighlighted: {},
+    noteContainer: {
+        height: '100%',
+        flex: 1,
+        padding: 8,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center'
+    },
+    noteTitle: {
+        fontFamily: 'Helvetica-Bold',
+        fontSize: 16,
+        marginRight: 8
+    },
+    notesInput: {
+        flex: 0.5,
+        fontSize: 12,
+        fontFamily: 'Helvetica-Bold'
+    }
 })
 
 export default ExerciseItem

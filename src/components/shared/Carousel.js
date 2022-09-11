@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     paginationText: {
         color: white,
         fontFamily: 'Helvetica-Bold',
-        fontSize: 14
+        fontSize: 11
     },
     activePagination: {
         backgroundColor: white,

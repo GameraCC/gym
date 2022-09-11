@@ -148,6 +148,16 @@ const styles = StyleSheet.create({
         resizeMode: 'center',
         width: '100%',
         height: '100%'
+    },
+    workoutButton: {
+        width: '100%',
+        padding: 32,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        borderColor: black,
+        borderTopWidth: 0.75
     }
 })
 

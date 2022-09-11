@@ -62,7 +62,8 @@ const Backdrop = props => {
                                 unit: VALID_EXERCISE_WEIGHT_UNITS[0]
                             }
                         }
-                    ]
+                    ],
+                    note: ''
                 }
             ])
         }
@@ -114,6 +115,21 @@ const Backdrop = props => {
         [selectedExercises]
     )
 
+    const setNote = useCallback(
+        (index, note) => {
+            const newExercises = [...selectedExercises]
+
+            const foundExercise = selectedExercises[index]
+
+            foundExercise.note = note
+
+            newExercises.splice(index, 1, foundExercise)
+
+            setSelectedExercises(newExercises)
+        },
+        [selectedExercises]
+    )
+
     const deleteExercise = useCallback(
         index => {
             const newExercises = [...selectedExercises]
@@ -135,9 +151,11 @@ const Backdrop = props => {
                 keyboardShouldPersistTaps="always"
             >
                 <CreateWorkoutHeader navigation={navigation} onSave={onSave} />
-                {selectedExercises.map(({id, parts}, index) => (
+                {selectedExercises.map(({id, parts, note}, index) => (
                     <ExerciseItem
                         key={id + index}
+                        note={note}
+                        setNote={note => setNote(index, note)}
                         index={index}
                         id={id}
                         parts={parts}
@@ -150,6 +168,7 @@ const Backdrop = props => {
                         <Text style={styles.noneText}>No Exercises</Text>
                     </View>
                 )}
+                <View style={styles.scrollViewPadding} />
             </ScrollView>
             <Animated.View style={opacity}>
                 <Pressable
@@ -174,6 +193,10 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '100%',
         backgroundColor: white
+    },
+    scrollViewPadding: {
+        width: '100%',
+        height: 96
     },
     exerciseList: {
         width: '100%',

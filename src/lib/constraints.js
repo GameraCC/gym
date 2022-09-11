@@ -9,7 +9,7 @@ const EMAIL_VALIDATION_REGEX =
 const USERNAME_VALIDATION_REGEX =
     /^([a-z0-9_](?:(?:[a-z0-9_]|(?:\.(?!\.))){0,28}(?:[a-z0-9_]))?)$/
 const VALID_EXERCISE_WEIGHT_UNITS = ['lbs', 'kg'] // First unit is default shown upon adding set
-const VALID_EXERCISE_REP_UNITS = ['sets', 'reps', 'secs', 'AMRAP'] // First unit is default shown upon adding set
+const VALID_EXERCISE_REP_UNITS = ['reps', 'secs', 'AMRAP'] // First unit is default shown upon adding set
 
 /**
  * Methods to apply constraints on inputs
@@ -107,6 +107,8 @@ const workoutConstraint = workout => {
             return 'Exercise must include atleast 1 part'
         if (exercise.parts.length > 16)
             return 'Exercise must have less than 16 parts'
+        if (exercise.note.length > 32)
+            return 'Exercise note must be less than 32 characters'
 
         for (const part of exercise.parts) {
             if (!part.sets || part.sets > 1000)
