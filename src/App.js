@@ -8,8 +8,9 @@ import * as SplashScreen from 'expo-splash-screen'
 import {useFonts} from 'expo-font'
 
 // Custom global alert utilizing absolute positioning available on any screen.
-import Alert from '@shared/Alert'
 import Main from './components/main'
+import Alert from '@shared/Alert'
+import Keyboard from '@shared/Keyboard'
 
 import rootReducer from './reducers'
 
@@ -36,6 +37,7 @@ const App = () => {
             <StatusBar style="light" />
             <Main />
             <Alert />
+            <Keyboard />
         </Provider>
     )
 }

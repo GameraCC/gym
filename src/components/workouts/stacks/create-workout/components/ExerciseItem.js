@@ -5,7 +5,7 @@ import Images from '@assets/images'
 import ExerciseItemPart from './ExerciseItemPart'
 
 import {EXERCISES} from '@assets/static'
-import {white, black, gray} from '@assets/colors'
+import {white, black, gray, light_black} from '@assets/colors'
 import {
     VALID_EXERCISE_REP_UNITS,
     VALID_EXERCISE_WEIGHT_UNITS
@@ -47,6 +47,8 @@ const updatePart = (object, callback, updateExpression) => (index, value) => {
     part = updateExpression(part, value)
 
     newParts.splice(index, 1, part)
+
+    console.log(newParts)
 
     callback(newParts)
 }
@@ -104,15 +106,13 @@ const ExerciseItem = props => {
         }
     }))
 
-    const updateRepsValue = updatePart(parts, setParts, (part, value) => {
-        return {
-            ...part,
-            reps: {
-                ...part.reps,
-                value
-            }
+    const updateRepsValue = updatePart(parts, setParts, (part, value) => ({
+        ...part,
+        reps: {
+            ...part.reps,
+            value
         }
-    })
+    }))
 
     const updateSets = updatePart(parts, setParts, (part, sets) => ({
         ...part,
@@ -142,8 +142,8 @@ const ExerciseItem = props => {
                         style={styles.deleteImage}
                         source={
                             isDeleteHighlighted
-                                ? Images.DELETE_HIGHLGIHTED
-                                : Images.DELETE
+                                ? Images.DELETE_GRAY
+                                : Images.DELETE_WHITE
                         }
                     />
                 </Pressable>
@@ -168,7 +168,7 @@ const ExerciseItem = props => {
                             repsUnit={repsUnit}
                             weightValue={weightValue}
                             weightUnit={weightUnit}
-                            updateSets={updateSets}
+                            updateSets={value => updateSets(index, value)}
                             updateRepsValue={value =>
                                 updateRepsValue(index, value)
                             }
@@ -186,20 +186,9 @@ const ExerciseItem = props => {
                 )}
             </View>
             <View style={styles.footerContainer}>
-                <View style={styles.noteContainer}>
-                    <Text style={styles.noteTitle}>Note</Text>
-                    <TextInput
-                        style={styles.notesInput}
-                        keyboardType="default"
-                        placeholder="Add a note"
-                        onChangeText={setNote}
-                        value={note}
-                        autoCapitalize="none"
-                        multiline={false}
-                        numberOfLines={1}
-                        maxLength={32}
-                    />
-                </View>
+                <Pressable style={styles.noteContainer}>
+                    <Text style={styles.noteText}>View Notes</Text>
+                </Pressable>
                 <View style={styles.addPartContainer}>
                     {parts.length < 16 && (
                         <TouchableOpacity
@@ -224,7 +213,7 @@ const ExerciseItem = props => {
                                     isAddHighlighted && styles.addHighlighted
                                 ]}
                             >
-                                Add super set
+                                Add set
                             </Text>
                         </TouchableOpacity>
                     )}
@@ -238,27 +227,33 @@ const styles = StyleSheet.create({
     container: {
         overflow: 'hidden',
         backgroundColor: white,
-        borderTopWidth: 0.75,
-        borderBottomWidth: 0.75,
-        borderColor: black
+        borderWidth: 0.75,
+        borderRadius: 12,
+        borderColor: black,
+        marginLeft: 32,
+        marginRight: 32
     },
     headerContainer: {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
-        marginTop: 16,
-        marginBottom: 4
+        paddingTop: 4,
+        paddingBottom: 4,
+        marginBottom: 8,
+        backgroundColor: black
     },
     exerciseImage: {
         width: 40,
         height: 40,
-        resizeMode: 'contain'
+        resizeMode: 'contain',
+        borderRadius: 12
     },
     exerciseName: {
         textAlign: 'center',
-        fontSize: 20,
-        fontFamily: 'Helvetica'
+        fontSize: 16,
+        fontFamily: 'Helvetica',
+        color: white
     },
     deleteButton: {
         width: 24,
@@ -269,18 +264,21 @@ const styles = StyleSheet.create({
         height: 24
     },
     partsContainer: {
-        width: '100%',
+        marginLeft: 16,
+        marginRight: 16,
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'flex-start'
     },
     footerContainer: {
+        marginLeft: 16,
+        marginRight: 16,
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
-        height: 48
+        height: 24
     },
     addPartContainer: {},
     addPartButton: {
@@ -310,15 +308,9 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         alignItems: 'center'
     },
-    noteTitle: {
+    noteText: {
         fontFamily: 'Helvetica-Bold',
-        fontSize: 16,
-        marginRight: 8
-    },
-    notesInput: {
-        flex: 0.5,
-        fontSize: 12,
-        fontFamily: 'Helvetica-Bold'
+        fontSize: 12
     }
 })
 

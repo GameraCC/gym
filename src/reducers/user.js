@@ -12,7 +12,7 @@ import {
     SET_REFRESHING,
     HYDRATE_USER,
     RESET_USER
-} from '../actions/types'
+} from '@actions/types'
 
 /**
  * Contains all reducers to modify user data related state

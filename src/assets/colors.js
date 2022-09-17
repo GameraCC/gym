@@ -1,25 +1,29 @@
-const green = '#64e887'
-const red = '#c94f4f'
-const orange = '#F5A65B'
-const gray = '#747474'
-const blue = '#8A5CFF'
-const black = '#000'
 const background = '#fff'
-const white = '#fff'
+
+const red = '#c94f4f'
+const green = '#64e887'
+const light_blue = '#1F87FF'
+
+const black = '#000'
 const light_black = '#1e1e1e'
+
+const gray = '#D4D8DD'
+const dark_gray = '#d6d8dd'
+const darker_gray = '#8F95A3'
+
+const white = '#fff'
 const light_white = '#f8f8f8'
-const darker_blue = '#1F87FF'
 
 export {
+    background,
     green,
     red,
-    gray,
+    light_blue,
     black,
-    background,
-    white,
     light_black,
+    gray,
+    dark_gray,
+    white,
     light_white,
-    orange,
-    blue,
-    darker_blue
+    darker_gray
 }

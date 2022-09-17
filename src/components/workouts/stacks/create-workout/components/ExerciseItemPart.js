@@ -71,7 +71,8 @@ const ExerciseItemPart = props => {
                     numberOfLines={1}
                     keyboardDismissMode="on-drag"
                     keyboardShouldPersistTaps="always"
-                    keyboardType="numeric"
+                    keyboardType="phone-pad"
+                    returnKeyType="default"
                 />
             </View>
             <View style={[styles.itemContainer, styles.borderContainer]}>
@@ -84,6 +85,7 @@ const ExerciseItemPart = props => {
                         keyboardDismissMode="on-drag"
                         keyboardShouldPersistTaps="always"
                         keyboardType="numeric"
+                        returnKeyType="search"
                     />
                     <Pressable
                         style={[
@@ -114,7 +116,8 @@ const ExerciseItemPart = props => {
                         numberOfLines={1}
                         keyboardDismissMode="on-drag"
                         keyboardShouldPersistTaps="always"
-                        keyboard="numeric"
+                        keyboardType="numeric"
+                        returnKeyType="done"
                     />
                     <Pressable
                         style={[
@@ -163,7 +166,7 @@ const styles = StyleSheet.create({
         height: 48,
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'space-around',
+        justifyContent: 'space-between',
         alignItems: 'center'
     },
     borderContainer: {
@@ -176,6 +179,10 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    itemSeperator: {
+        width: 48,
+        height: 48
     },
     unitValueContainer: {
         display: 'flex',

@@ -42,7 +42,7 @@ const ErrorAlert = props => {
 }
 
 const Alert = () => {
-    const isVisible = useSelector(state => state.alert.isVisible)
+    const isVisible = useSelector(state => state.alert.visible)
     const kind = useSelector(state => state.alert.kind)
     const title = useSelector(state => state.alert.title)
     const message = useSelector(state => state.alert.message)

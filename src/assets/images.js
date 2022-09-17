@@ -6,6 +6,8 @@ export default {
     FORWARD_WHITE: require('./images/icons/forward-white.png'),
     DELETE_HIGHLIGHTED: require('./images/icons/delete-highlighted.png'),
     DELETE: require('./images/icons/delete.png'),
+    DELETE_GRAY: require('./images/icons/delete-gray.png'),
+    DELETE_WHITE: require('./images/icons/delete-white.png'),
     SEARCH: require('./images/icons/search.png'),
     HOME: require('./images/icons/home.png'),
     HOME_HIGHLIGHTED: require('./images/icons/home-highlighted.png'),
@@ -14,6 +16,13 @@ export default {
     ADD_HIGHLIGHTED: require('./images/icons/add-highlighted.png'),
     REMOVE_CROSS: require('./images/icons/remove-cross.png'),
     REMOVE_CROSS_HIGHLIGHTED: require('./images/icons/remove-cross-highlighted.png'),
+    REMOVE_CROSS_GRAY: require('./images/icons/remove-cross-gray.png'),
+
+    KEYBOARD_HIDE: require('./images/icons/down-arrow-white.png'),
+    KEYBOARD_INCREMENT: require('./images/icons/add-white.png'),
+    KEYBOARD_DECREMENT: require('./images/icons/decrement-white.png'),
+    KEYBOARD_REMOVE_INPUT: require('./images/icons/back-arrow-white.png'),
+    KEYBOARD_CONTINUE: require('./images/icons/enter-arrow-white.png'),
 
     SEATED_BARBELL_OVERHEAD_PRESS: require('./images/exercises/SEATED_BARBELL_OVERHEAD_PRESS.gif'),
     SEATED_BARBELL_OVERHEAD_PRESSa: require('./images/exercises/SEATED_BARBELL_OVERHEAD_PRESS.gif'),

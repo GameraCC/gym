@@ -1,4 +1,4 @@
-import {ADD_EXERCISE} from '../actions/types'
+import {ADD_EXERCISE} from '@actions/types'
 
 /**
  * Used for all updates from nested components / child components / screen components to parent components

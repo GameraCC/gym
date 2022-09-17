@@ -35,15 +35,15 @@ const CreateWorkoutHeader = props => {
 
 const styles = StyleSheet.create({
     buttonStyle: {
-        backgroundColor: green,
-        borderColor: green
+        backgroundColor: black,
+        borderColor: black
     },
     buttonTextStyle: {
         color: white
     },
     buttonHighlightedStyle: {
-        backgroundColor: black,
-        borderColor: black
+        backgroundColor: green,
+        borderColor: green
     }
 })
 

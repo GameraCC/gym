@@ -25,7 +25,7 @@ import {
     light_black,
     light_white,
     blue,
-    darker_blue
+    dark_blue
 } from '@assets/colors'
 import {deleteWorkout, getAllWorkouts} from '../actions/user'
 import {Header, EditableHeader} from './Header'
@@ -1163,7 +1163,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     simpleCategory: {
-        backgroundColor: darker_blue
+        backgroundColor: dark_blue
     },
     advancedCategory: {
         backgroundColor: blue

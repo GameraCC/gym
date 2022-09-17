@@ -2,7 +2,7 @@ import {
     SET_SESSION_LOADING,
     SET_SESSION_TOKEN,
     SET_SESSION_ERROR
-} from '../actions/types'
+} from '@actions/types'
 
 /**
  * Contains all reducers to modify session-related state
