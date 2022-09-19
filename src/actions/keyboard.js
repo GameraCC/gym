@@ -4,7 +4,8 @@ import {
     KEYBOARD_INPUT,
     KEYBOARD_REMOVE_INPUT,
     KEYBOARD_INCREMENT,
-    KEYBOARD_CONTINUE
+    KEYBOARD_CONTINUE,
+    KEYBOARD_INPUT_RESET
 } from './types'
 
 /**
@@ -12,7 +13,7 @@ import {
  *
  * @param {'numeric'} kind - The kind of keyboard
  */
-const showNumericKeyboard = kind => ({
+const showKeyboard = kind => ({
     type: SHOW_KEYBOARD,
     kind
 })
@@ -24,6 +25,10 @@ const hideKeyboard = () => ({
 const keyboardInput = input => ({
     type: KEYBOARD_INPUT,
     input
+})
+
+const keyboardResetInput = input => ({
+    type: KEYBOARD_INPUT_RESET
 })
 
 const keyboardIncrement = amount => ({
@@ -40,9 +45,10 @@ const keyboardRemoveInput = () => ({
 })
 
 export {
-    showNumericKeyboard,
+    showKeyboard,
     hideKeyboard,
     keyboardInput,
+    keyboardResetInput,
     keyboardRemoveInput,
     keyboardIncrement,
     keyboardContinue

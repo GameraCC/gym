@@ -8,10 +8,10 @@ const config = {
         slug: 'gym',
         version: '1.0.0',
         orientation: 'portrait',
-        icon: './src/assets/app/icon.png',
+        icon: './src/assets/images/app/icon.png',
         userInterfaceStyle: 'light',
         splash: {
-            image: './src/assets/app/splash.png',
+            image: './src/assets/images/app/splash.png',
             resizeMode: 'contain',
             backgroundColor: '#fff'
         },
@@ -24,7 +24,7 @@ const config = {
         },
         android: {
             adaptiveIcon: {
-                foregroundImage: './src/assets/app/icon.png',
+                foregroundImage: './src/assets/images/app/icon.png',
                 backgroundColor: '#fff'
             }
         },

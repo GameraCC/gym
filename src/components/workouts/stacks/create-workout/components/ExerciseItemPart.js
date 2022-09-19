@@ -1,13 +1,15 @@
-import {useState} from 'react'
-import {StyleSheet, View, Pressable, Image, TextInput, Text} from 'react-native'
+import {useState, useRef} from 'react'
+import {StyleSheet, View, Pressable, Image, Text} from 'react-native'
+
+import KeyboardTextInput from '@shared/KeyboardTextInput'
 
 import Images from '@assets/images'
+import {gray} from '@assets/colors'
+import {black, white} from '@assets/colors'
 import {
     VALID_EXERCISE_REP_UNITS,
     VALID_EXERCISE_WEIGHT_UNITS
 } from '@lib/constraints'
-import {gray} from '@assets/colors'
-import {black, white} from '@assets/colors'
 
 const ExerciseItemPart = props => {
     const {
@@ -27,6 +29,9 @@ const ExerciseItemPart = props => {
     const [isDeleteHighlighted, setDeleteHighlighted] = useState(false)
     const [isRepsHighlighted, setRepsHighlighted] = useState(false)
     const [isWeightHighlighted, setWeightHighlighted] = useState(false)
+
+    const repsValueRef = useRef(null)
+    const weightValueRef = useRef(null)
 
     const onPressInDeleteHandler = () => setDeleteHighlighted(false)
     const onPressOutDeleteHandler = () => setDeleteHighlighted(true)
@@ -61,31 +66,36 @@ const ExerciseItemPart = props => {
         updateWeightUnit(unit)
     }
 
+    /**
+     * Handling for displaying custom numeric keyboard
+     */
+
     return (
         <View style={styles.container}>
             <View style={[styles.itemContainer, styles.borderContainer]}>
-                <TextInput
+                <KeyboardTextInput
+                    kind="numeric"
+                    onChangeText={updateSets}
+                    continueRef={repsValueRef}
                     style={styles.setInput}
                     value={sets}
-                    onChangeText={updateSets}
                     numberOfLines={1}
                     keyboardDismissMode="on-drag"
                     keyboardShouldPersistTaps="always"
-                    keyboardType="phone-pad"
-                    returnKeyType="default"
                 />
             </View>
             <View style={[styles.itemContainer, styles.borderContainer]}>
                 <View style={styles.unitValueContainer}>
-                    <TextInput
+                    <KeyboardTextInput
+                        kind="numeric"
+                        onChangeText={updateRepsValue}
+                        ref={repsValueRef}
+                        continueRef={weightValueRef}
                         style={styles.valueInput}
                         value={repsValue}
-                        onChangeText={updateRepsValue}
                         numberOfLines={1}
                         keyboardDismissMode="on-drag"
                         keyboardShouldPersistTaps="always"
-                        keyboardType="numeric"
-                        returnKeyType="search"
                     />
                     <Pressable
                         style={[
@@ -109,15 +119,15 @@ const ExerciseItemPart = props => {
             </View>
             <View style={[styles.itemContainer, styles.borderContainer]}>
                 <View style={styles.unitValueContainer}>
-                    <TextInput
+                    <KeyboardTextInput
+                        kind="numeric"
+                        onChangeText={updateWeightValue}
+                        ref={weightValueRef}
                         style={styles.valueInput}
                         value={weightValue}
-                        onChangeText={updateWeightValue}
                         numberOfLines={1}
                         keyboardDismissMode="on-drag"
                         keyboardShouldPersistTaps="always"
-                        keyboardType="numeric"
-                        returnKeyType="done"
                     />
                     <Pressable
                         style={[

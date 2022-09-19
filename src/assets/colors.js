@@ -7,7 +7,7 @@ const light_blue = '#1F87FF'
 const black = '#000'
 const light_black = '#1e1e1e'
 
-const gray = '#D4D8DD'
+const gray = '#747474'
 const dark_gray = '#d6d8dd'
 const darker_gray = '#8F95A3'
 

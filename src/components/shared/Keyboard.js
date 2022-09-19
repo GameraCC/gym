@@ -120,8 +120,14 @@ const NumericKeyboard = () => {
                 </View>
                 <View style={styles.inputRow}>
                     <View style={styles.placeholder} />
-                    <Button text={0} onPress={() => keyboardInput('0')} />
-                    <Button text="." onPress={() => keyboardInput('.')} />
+                    <Button
+                        text={0}
+                        onPress={() => dispatch(keyboardInput('0'))}
+                    />
+                    <Button
+                        text="."
+                        onPress={() => dispatch(keyboardInput('.'))}
+                    />
                 </View>
             </View>
             <View style={styles.extraContainer}>
@@ -172,10 +178,8 @@ const NumericKeyboard = () => {
 }
 
 const Keyboard = () => {
-    // const isVisible = useSelector(state => state.keyboard.visible)
-    // const kind = useSelector(state => state.keyboard.kind)
-    const isVisible = true
-    const kind = 'numeric'
+    const isVisible = useSelector(state => state.keyboard.visible)
+    const kind = useSelector(state => state.keyboard.kind)
 
     if (isVisible) {
         switch (kind) {

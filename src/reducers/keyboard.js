@@ -3,7 +3,8 @@ import {
     HIDE_KEYBOARD,
     KEYBOARD_INPUT,
     KEYBOARD_INCREMENT,
-    KEYBOARD_CONTINUE
+    KEYBOARD_CONTINUE,
+    KEYBOARD_INPUT_RESET
 } from '@actions/types'
 import {KEYBOARD_REMOVE_INPUT} from '../actions/types'
 
@@ -15,13 +16,13 @@ import {KEYBOARD_REMOVE_INPUT} from '../actions/types'
  * @property {boolean} visible - Whether or not the keyboard is visible
  * @property {'numeric'} keyboard - The kind of keyboard to display
  * @property {string} input - The input of the keyboard
- * @property {number} continue - The number of times the continue button has been pressed
+ * @property {number} continueCount - The number of times the continue button has been pressed
  */
 const initialState = {
     kind: 'numeric',
     visible: false,
     input: '',
-    continue: 0
+    continueCount: 0
 }
 
 const keyboard = (state = initialState, action) => {
@@ -32,6 +33,12 @@ const keyboard = (state = initialState, action) => {
             state = {
                 ...state,
                 input: state.input ? state.input + action.input : action.input
+            }
+            break
+        case KEYBOARD_INPUT_RESET:
+            state = {
+                ...state,
+                input: ''
             }
             break
         case KEYBOARD_REMOVE_INPUT:
@@ -53,14 +60,13 @@ const keyboard = (state = initialState, action) => {
         case KEYBOARD_CONTINUE:
             state = {
                 ...state,
-                continue: state.continue + 1,
-                visible: false
+                continueCount: state.continueCount + 1
             }
             break
         case SHOW_KEYBOARD:
             state = {
                 ...state,
-                kind: 'numeric',
+                kind: action.kind,
                 visible: true
             }
             break
