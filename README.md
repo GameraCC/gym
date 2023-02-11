@@ -4,12 +4,12 @@ Gym app
 
 ## Usage
 1) Install dependencies
-...`npm install`
+```npm install```
 2) Run EXPO
 Windows:
-`npm run start-win`
+```npm run start-win```
 Mac:
-`npm run start-win`
+```npm run start-win```
 
 ## Components Modularity
 
