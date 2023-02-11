@@ -10,6 +10,7 @@ Gym app
 
 Windows:
 ```npm run start-win```
+
 Mac:
 ```npm run start-win```
 
