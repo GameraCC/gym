@@ -6,6 +6,8 @@ Gym app
 1) Install dependencies
 ```npm install```
 2) Run EXPO
+
+
 Windows:
 ```npm run start-win```
 Mac:
