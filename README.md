@@ -2,6 +2,14 @@
 
 Gym app
 
+## Usage
+1) Install dependencies
+...`npm install`
+2) Windows:
+...`npm run start-win`
+2) Mac:
+...`npm run start-win`
+
 ## Components Modularity
 
 Seperate large components into very modularized components, each with their own individual styles for maintainability and scalability. If an item has a child component such as a Seperator component, or an Item component which does not use many styles, and has no external dependencies its alright to include that component in the same file.
