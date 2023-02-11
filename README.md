@@ -1,6 +1,6 @@
 # gym
 
-Gym app
+Work-In-Progress Gym app
 
 ## Usage
 1) Install dependencies
